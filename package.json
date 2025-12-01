@@ -7,11 +7,26 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "build:gateway": "nest build ms-client-gateway",
+    "build:productos": "nest build ms-productos",
+    "build:usuarios": "nest build ms-usuarios",
+    "build:all": "nest build ms-gateway && nest build ms-usuarios && nest build ms-productos",
     "start": "nest start",
+    "start:gateway": "nest start ms-client-gateway",
+    "start:productos": "nest start ms-productos",
+    "start:usuarios": "nest start ms-usuarios",
     "start:dev": "nest start --watch",
+    "start:gateway:dev": "nest start ms-client-gateway --watch",
+    "start:productos:dev": "nest start ms-productos --watch",
+    "start:usuarios:dev": "nest start ms-usuarios --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:gateway:debug": "nest start ms-client-gateway --debug --watch",
+    "start:productos:debug": "nest start ms-productos --debug --watch",
+    "start:usuarios:debug": "nest start ms-usuarios --debug --watch",
+    "start:prod:gateway": "node dist/apps/ms-gateway/main",
+    "start:prod:usuarios": "node dist/apps/ms-usuarios/main",
+    "start:prod:productos": "node dist/apps/ms-productos/main",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"libs/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -57,7 +72,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": ".",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
@@ -65,7 +80,14 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "coverageDirectory": "./coverage",
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/src/",
+      "<rootDir>/libs/"
+    ],
+    "moduleNameMapper": {
+      "^@app/common(|/.*)$": "<rootDir>/libs/common/src/$1"
+    }
   }
 }
