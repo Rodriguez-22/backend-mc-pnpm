@@ -1,8 +1,8 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { RolesService } from './roles.service';
-import { CreateRoleDto } from '../../../../libs/common/src/dto/ms-roles/create-role.dto';
-import { UpdateRoleDto } from '../../../../libs/common/src/dto/ms-roles/update-role.dto';
+import { CreateRoleDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-roles/create-role.dto';
+import { UpdateRoleDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-roles/update-role.dto';
 
 @Controller()
 export class RolesController {

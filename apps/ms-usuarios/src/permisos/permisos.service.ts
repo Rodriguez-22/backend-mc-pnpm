@@ -2,9 +2,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Permiso } from '../../../../libs/common/src/entities/ms-permisos/permiso.entity';
-import { CreatePermisoDto } from '../../../../libs/common/src/dto/ms-permisos/create-permiso.dto';
-import { UpdatePermisoDto } from '../../../../libs/common/src/dto/ms-permisos/update.permiso.dto';
+import { Permiso } from '../../../../libs/common/src/entities/ms-usuarios/ms-permisos/permiso.entity';
+import { CreatePermisoDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-permisos/create-permiso.dto';
+import { UpdatePermisoDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-permisos/update.permiso.dto';
 
 @Injectable()
 export class PermisosService {

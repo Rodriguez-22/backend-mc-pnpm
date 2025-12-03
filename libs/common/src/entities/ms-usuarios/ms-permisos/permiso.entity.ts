@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
   ManyToMany,
 } from 'typeorm';
-import { Role } from '../../../../../libs/common/src/entities/ms-roles/role.entity';
+import { Role } from '../ms-roles/role.entity';
 
 @Entity('permisos')
 export class Permiso {

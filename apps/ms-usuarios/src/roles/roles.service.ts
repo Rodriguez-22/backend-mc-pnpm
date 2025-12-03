@@ -2,10 +2,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
-import { Role } from '../../../../libs/common/src/entities/ms-roles/role.entity';
-import { Permiso } from '../../../../libs/common/src/entities/ms-permisos/permiso.entity';
-import { CreateRoleDto } from '../../../../libs/common/src/dto/ms-roles/create-role.dto';
-import { UpdateRoleDto } from '../../../../libs/common/src/dto/ms-roles/update-role.dto';
+import { Role } from '../../../../libs/common/src/entities/ms-usuarios/ms-roles/role.entity';
+import { Permiso } from '../../../../libs/common/src/entities/ms-usuarios/ms-permisos/permiso.entity';
+import { CreateRoleDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-roles/create-role.dto';
+import { UpdateRoleDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-roles/update-role.dto';
 
 @Injectable()
 export class RolesService {

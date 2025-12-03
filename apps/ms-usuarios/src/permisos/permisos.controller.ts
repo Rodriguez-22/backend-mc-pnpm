@@ -1,8 +1,8 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { PermisosService } from './permisos.service';
-import { CreatePermisoDto } from '../../../../libs/common/src/dto/ms-permisos/create-permiso.dto';
-import { UpdatePermisoDto } from '../../../../libs/common/src/dto/ms-permisos/update.permiso.dto';
+import { CreatePermisoDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-permisos/create-permiso.dto';
+import { UpdatePermisoDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-permisos/update.permiso.dto';
 
 @Controller()
 export class PermisosController {

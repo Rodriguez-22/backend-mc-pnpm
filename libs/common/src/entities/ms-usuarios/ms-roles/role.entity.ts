@@ -8,8 +8,8 @@ import {
   ManyToMany,
   JoinTable,
 } from 'typeorm';
-import { User } from '../../../../../libs/common/src/entities/ms-usuarios/usuario.entity';
-import { Permiso } from '../../../../../libs/common/src/entities/ms-permisos/permiso.entity';
+import { User } from '../usuario.entity';
+import { Permiso } from '../ms-permisos/permiso.entity';
 
 @Entity('roles')
 export class Role {

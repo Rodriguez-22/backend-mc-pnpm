@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PermisosController } from './permisos.controller';
 import { PermisosService } from './permisos.service';
-import { Permiso } from '../../../../libs/common/src/entities/ms-permisos/permiso.entity';
+import { Permiso } from '../../../../libs/common/src/entities/ms-usuarios/ms-permisos/permiso.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Permiso])],
