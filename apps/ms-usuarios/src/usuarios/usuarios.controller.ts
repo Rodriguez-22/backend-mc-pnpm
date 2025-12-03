@@ -1,9 +1,9 @@
 // src/modulos/users/users.controller.ts
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersService } from './usuarios.service';
+import { CreateUserDto } from '../../../../libs/common/src/dto/ms-usuarios/create-usuario.dto';
+import { UpdateUserDto } from '../../../../libs/common/src/dto/ms-usuarios/update-usuario.dto';
 
 @Controller()
 export class UsersController {
