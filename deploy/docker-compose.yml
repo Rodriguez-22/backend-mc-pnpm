@@ -1,0 +1,84 @@
+services:
+  # Base de datos para Users
+  db-users:
+    image: postgres:15
+    container_name: postgres-users
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: db_users
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/users:/var/lib/postgresql/data
+
+  # Base de datos para Auth
+  db-auth:
+    image: postgres:15
+    container_name: postgres-auth
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: db_auth
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./data/auth:/var/lib/postgresql/data
+
+  # Base de datos para Products
+  db-products:
+    image: postgres:15
+    container_name: postgres-products
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: db_products
+    ports:
+      - "5434:5432"
+    volumes:
+      - ./data/products:/var/lib/postgresql/data
+
+  # Base de datos para Orders
+  db-orders:
+    image: postgres:15
+    container_name: postgres-orders
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: db_orders
+    ports:
+      - "5435:5432"
+    volumes:
+      - ./data/orders:/var/lib/postgresql/data
+
+  # Base de datos para Tables
+  db-tables:
+    image: postgres:15
+    container_name: postgres-tables
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: db_tables
+    ports:
+      - "5436:5432"
+    volumes:
+      - ./data/tables:/var/lib/postgresql/data
+
+  # Base de datos para QR Codes
+  db-qrcodes:
+    image: postgres:15
+    container_name: postgres-qrcodes
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: db_qrcodes
+    ports:
+      - "5437:5432"
+    volumes:
+      - ./data/qrcodes:/var/lib/postgresql/data
