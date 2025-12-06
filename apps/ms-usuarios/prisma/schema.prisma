@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+  // Generamos el cliente en la raíz del monorepo, fuera de tu código fuente
+  output   = "../../../node_modules/.prisma/client"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  // La URL se inyecta desde prisma.config.ts
+}
+
+// apps/ms-usuarios/prisma/schema.prisma
+
+// ... (configuración generator y datasource igual)
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  username  String   @unique
+  firstName String
+  lastName  String
+  password  String
+  isActive  Boolean  @default(true)
+
+  // ✅ CORRECCIÓN: Añadimos @relation("UserRoles") para que coincida con Role
+  roles     Role[]   @relation("UserRoles") 
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Role {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  slug      String    @unique
+  isActive  Boolean   @default(true)
+
+  // Esta línea ya estaba bien, pero necesitaba su pareja en User
+  users     User[]    @relation("UserRoles") 
+  
+  permisos  Permiso[] @relation("RolePermisos")
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("roles")
+}
+
+model Permiso {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique 
+  action    String   
+  resource  String   
+  isActive  Boolean  @default(true)
+
+  // Asegúrate de que esta también coincida con Role (RolePermisos)
+  roles     Role[]   @relation("RolePermisos")
+
+  createdAt DateTime @default(now())
+
+  @@map("permisos")
+}
