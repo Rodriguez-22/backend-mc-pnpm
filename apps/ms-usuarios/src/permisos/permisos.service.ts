@@ -1,51 +1,42 @@
-// src/modulos/permisos/permisos.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Permiso } from '../../../../libs/common/src/entities/ms-usuarios/ms-permisos/permiso.entity';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreatePermisoDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-permisos/create-permiso.dto';
 import { UpdatePermisoDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-permisos/update.permiso.dto';
 
 @Injectable()
 export class PermisosService {
-  constructor(
-    @InjectRepository(Permiso)
-    private permisoRepository: Repository<Permiso>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async create(createPermisoDto: CreatePermisoDto): Promise<Permiso> {
-    const slug = `${createPermisoDto.resource}:${createPermisoDto.action}`;
+  async create(createPermisoDto: CreatePermisoDto) {
+    // Slug autogenerado: "resource:action" (ej: "users:create")
+    const slug = `${createPermisoDto.resource}:${createPermisoDto.action}`.toLowerCase();
 
-    const permiso = this.permisoRepository.create({
-      ...createPermisoDto,
-      slug,
+    return this.prisma.permiso.create({
+      data: {
+        ...createPermisoDto,
+        slug
+      }
     });
-
-    return await this.permisoRepository.save(permiso);
   }
 
-  async findAll(): Promise<Permiso[]> {
-    return await this.permisoRepository.find();
+  async findAll() {
+    return this.prisma.permiso.findMany();
   }
 
-  async findOne(id: string): Promise<Permiso> {
-    const permiso = await this.permisoRepository.findOne({ where: { id } });
-
-    if (!permiso) {
-      throw new NotFoundException('Permiso no encontrado');
-    }
-
+  async findOne(id: string) {
+    const permiso = await this.prisma.permiso.findUnique({ where: { id } });
+    if (!permiso) throw new NotFoundException('Permiso no encontrado');
     return permiso;
   }
 
-  async update(id: string, updatePermisoDto: UpdatePermisoDto): Promise<Permiso> {
-  const permiso = await this.findOne(id);
-  Object.assign(permiso, updatePermisoDto);
-  return await this.permisoRepository.save(permiso);
-}
+  async update(id: string, updatePermisoDto: UpdatePermisoDto) {
+    return this.prisma.permiso.update({
+      where: { id },
+      data: updatePermisoDto
+    });
+  }
 
-async remove(id: string): Promise<void> {
-  const permiso = await this.findOne(id); // Esto lanza NotFoundException si no existe
-  await this.permisoRepository.delete(id);
-}
+  async remove(id: string) {
+    return this.prisma.permiso.delete({ where: { id } });
+  }
 }

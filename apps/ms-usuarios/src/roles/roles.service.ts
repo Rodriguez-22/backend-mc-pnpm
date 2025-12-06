@@ -1,74 +1,63 @@
-// src/modulos/roles/roles.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, In } from 'typeorm';
-import { Role } from '../../../../libs/common/src/entities/ms-usuarios/ms-roles/role.entity';
-import { Permiso } from '../../../../libs/common/src/entities/ms-usuarios/ms-permisos/permiso.entity';
+import { PrismaService } from '../prisma/prisma.service'; // Inyección global
 import { CreateRoleDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-roles/create-role.dto';
 import { UpdateRoleDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-roles/update-role.dto';
 
 @Injectable()
 export class RolesService {
-  constructor(
-    @InjectRepository(Role)
-    private roleRepository: Repository<Role>,
-    @InjectRepository(Permiso)
-    private permisoRepository: Repository<Permiso>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async create(createRoleDto: CreateRoleDto): Promise<Role> {
-    const { permisoIds, ...roleData } = createRoleDto;
+  async create(createRoleDto: CreateRoleDto) {
+    const { permisoIds, name } = createRoleDto;
+    
+    // Generar slug (Ej: "Jefe de Cocina" -> "jefe_de_cocina")
+    const slug = name.toLowerCase().replace(/ /g, '_');
 
-    const slug = createRoleDto.name.toUpperCase().replace(/\s+/g, '_');
-
-    let permisos: Permiso[] = [];
-    if (permisoIds && permisoIds.length > 0) {
-      permisos = await this.permisoRepository.findBy({ id: In(permisoIds) });
-    }
-
-    const role = this.roleRepository.create({
-      ...roleData,
-      slug,
-      permisos,
-    });
-
-    return await this.roleRepository.save(role);
-  }
-
-  async findAll(): Promise<Role[]> {
-    return await this.roleRepository.find({
-      relations: ['permisos'],
+    return this.prisma.role.create({
+      data: {
+        name,
+        slug,
+        // Conectar permisos si vienen en el DTO
+        permisos: permisoIds ? {
+          connect: permisoIds.map((id) => ({ id }))
+        } : undefined
+      },
+      include: { permisos: true }
     });
   }
 
-  async findOne(id: string): Promise<Role> {
-    const role = await this.roleRepository.findOne({
+  async findAll() {
+    return this.prisma.role.findMany({
+      include: { permisos: true }
+    });
+  }
+
+  async findOne(id: string) {
+    const role = await this.prisma.role.findUnique({
       where: { id },
-      relations: ['permisos'],
+      include: { permisos: true }
     });
-
-    if (!role) {
-      throw new NotFoundException('Rol no encontrado');
-    }
-
+    if (!role) throw new NotFoundException(`Rol ${id} no encontrado`);
     return role;
   }
 
-  async update(id: string, updateRoleDto: UpdateRoleDto): Promise<Role> {
-    const role = await this.findOne(id);
+  async update(id: string, updateRoleDto: UpdateRoleDto) {
+    const { permisoIds, ...data } = updateRoleDto;
 
-    const { permisoIds, ...updateData } = updateRoleDto;
-
-    if (permisoIds) {
-      const permisos = await this.permisoRepository.findBy({ id: In(permisoIds) });
-      role.permisos = permisos;
-    }
-
-    Object.assign(role, updateData);
-    return await this.roleRepository.save(role);
+    return this.prisma.role.update({
+      where: { id },
+      data: {
+        ...data,
+        // Actualizar relaciones de permisos
+        permisos: permisoIds ? {
+          set: permisoIds.map((pid) => ({ id: pid })) // 'set' reemplaza todos los anteriores
+        } : undefined
+      },
+      include: { permisos: true }
+    });
   }
 
-  async remove(id: string): Promise<void> {
-    await this.roleRepository.delete(id);
+  async remove(id: string) {
+    return this.prisma.role.delete({ where: { id } });
   }
 }
