@@ -8,27 +8,27 @@ import { UpdateRoleDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-ro
 export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
-  @MessagePattern('createRole')
+  @MessagePattern({ cmd: 'createRole' }) // ✅ CAMBIO AQUÍ
   create(@Payload() createRoleDto: CreateRoleDto) {
     return this.rolesService.create(createRoleDto);
   }
 
-  @MessagePattern('findAllRoles')
+  @MessagePattern({ cmd: 'findAllRoles' }) // ✅ CAMBIO AQUÍ
   findAll() {
     return this.rolesService.findAll();
   }
 
-  @MessagePattern('findOneRole')
+  @MessagePattern({ cmd: 'findOneRole' }) // ✅ CAMBIO AQUÍ
   findOne(@Payload() id: string) {
     return this.rolesService.findOne(id);
   }
 
-  @MessagePattern('updateRole')
+  @MessagePattern({ cmd: 'updateRole' }) // ✅ CAMBIO AQUÍ
   update(@Payload() updateRoleDto: UpdateRoleDto) {
     return this.rolesService.update(updateRoleDto.id, updateRoleDto);
   }
 
-  @MessagePattern('removeRole')
+  @MessagePattern({ cmd: 'removeRole' }) // ✅ CAMBIO AQUÍ
   remove(@Payload() id: string) {
     return this.rolesService.remove(id);
   }

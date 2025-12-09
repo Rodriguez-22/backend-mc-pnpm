@@ -8,27 +8,27 @@ import { UpdatePermisoDto } from '../../../../libs/common/src/dto/ms-usuarios/ms
 export class PermisosController {
   constructor(private readonly permisosService: PermisosService) {}
 
-  @MessagePattern('createPermiso')
+  @MessagePattern({ cmd: 'createPermiso' }) // ✅ CAMBIO AQUÍ
   create(@Payload() createPermisoDto: CreatePermisoDto) {
     return this.permisosService.create(createPermisoDto);
   }
 
-  @MessagePattern('findAllPermisos')
+  @MessagePattern({ cmd: 'findAllPermisos' }) // ✅ CAMBIO AQUÍ
   findAll() {
     return this.permisosService.findAll();
   }
 
-  @MessagePattern('findOnePermiso')
+  @MessagePattern({ cmd: 'findOnePermiso' }) // ✅ CAMBIO AQUÍ
   findOne(@Payload() id: string) {
     return this.permisosService.findOne(id);
   }
 
-  @MessagePattern('updatePermiso')
+  @MessagePattern({ cmd: 'updatePermiso' }) // ✅ CAMBIO AQUÍ
   update(@Payload() updatePermisoDto: UpdatePermisoDto) {
     return this.permisosService.update(updatePermisoDto.id, updatePermisoDto);
   }
 
-  @MessagePattern('removePermiso')
+  @MessagePattern({ cmd: 'removePermiso' }) // ✅ CAMBIO AQUÍ
   remove(@Payload() id: string) {
     return this.permisosService.remove(id);
   }

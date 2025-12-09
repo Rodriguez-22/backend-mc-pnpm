@@ -10,28 +10,24 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     try {
-      const { password, ...userData } = createUserDto;
+      const { password, roleIds, ...userData } = createUserDto;
 
-      // 1. Encriptar la contraseña
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // 2. Crear el usuario en la DB usando Prisma
       const user = await this.prisma.user.create({
         data: {
           ...userData,
           password: hashedPassword,
-          // Opcional: Si quieres asignar un rol por defecto al crear
-          // roles: {
-          //   connect: { slug: 'waiter' } 
-          // }
+          // 2. AQUÍ ESTÁ LA MAGIA QUE FALTABA:
+          roles: roleIds && roleIds.length > 0 ? {
+            connect: roleIds.map((id) => ({ id })) 
+          } : undefined, 
         },
-        // Incluir relaciones si quieres devolver los roles asignados
         include: {
-          roles: true,
+          roles: true, // Para verlos en la respuesta
         },
       });
 
-      // 3. Retornar el usuario sin la contraseña (buena práctica)
       const { password: _, ...result } = user;
       return result;
 

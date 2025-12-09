@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { IsArray, IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class CreateUserDto {
     @IsEmail()
@@ -21,4 +21,9 @@ export class CreateUserDto {
     @IsNotEmpty()
     @MinLength(6)
     password: string;
+
+    @IsOptional()
+    @IsArray()
+    @IsString({ each: true }) // Valida que cada elemento sea un string
+    roleIds?: string[];
 }
