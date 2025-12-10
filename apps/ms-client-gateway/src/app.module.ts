@@ -5,6 +5,9 @@ import { AppService } from './app.service';
 import { GestionUsuariosController } from './modulos/ms-usuarios/usuarios.controller'; // <--- Importa el controlador
 import { GestionRolesController } from './modulos/ms-usuarios/roles.controller'; 
 import { GestionPermisosController } from './modulos/ms-usuarios/permisos.controller';
+import { GatewayProductosController } from './modulos/ms-productos/productos.controller';
+import { GatewayCategoriasController } from './modulos/ms-productos/categorias.controller';
+import { GatewayAlergenosController } from './modulos/ms-productos/alergenos.controller';
 import { MS_USERS } from './config/service'; // O usa 'MS_USERS' directo
 
 @Module({
@@ -20,7 +23,7 @@ import { MS_USERS } from './config/service'; // O usa 'MS_USERS' directo
       },
     ]),
   ],
-  controllers: [AppController, GestionUsuariosController, GestionRolesController, GestionPermisosController], // <--- Añádelo aquí
+  controllers: [AppController, GestionUsuariosController, GestionRolesController, GestionPermisosController, GatewayProductosController, GatewayCategoriasController, GatewayAlergenosController], // <--- Añádelo aquí
   providers: [AppService],
 })
 export class AppModule {}

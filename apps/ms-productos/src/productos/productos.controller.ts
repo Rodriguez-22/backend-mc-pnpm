@@ -1,69 +1,51 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
-import { ProductsService } from './productos.service';
+import { Controller } from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { ProductosService } from './productos.service';
 import { CreateProductDto } from '../../../../libs/common/src/dto/ms-productos/productos/create-productos.dto';
 import { UpdateProductDto } from '../../../../libs/common/src/dto/ms-productos/productos/update-productos.dto';
-import { JwtAuthGuard } from '../../../../libs/common/src/guards/jwt-auth.guard';
-import { RolesGuard } from '../../../../libs/common/src/guards/roles.guard';
-import { Roles } from '../../../../libs/common/src/decorators/roles.decorator';
-import { UserRole } from '../../../../libs/common/src/enums/user-role.enum';
 
-@Controller('products')
-export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+@Controller()
+export class ProductosController {
+  constructor(private readonly productosService: ProductosService) {}
 
-  @Get('available')
-  async findAvailable() {
-    return await this.productsService.findAvailable();
+  @MessagePattern({ cmd: 'create_product' })
+  create(@Payload() createProductDto: CreateProductDto) {
+    return this.productosService.create(createProductDto);
   }
 
-  @Get('search')
-  async search(@Query('q') query: string) {
-    return await this.productsService.search(query);
+  @MessagePattern({ cmd: 'find_all_products' })
+  findAll(@Payload() includeInactive: boolean) {
+    return this.productosService.findAll(includeInactive);
   }
 
-  @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
-  async create(@Body() createProductDto: CreateProductDto) {
-    return await this.productsService.create(createProductDto);
+  @MessagePattern({ cmd: 'find_one_product' })
+  findOne(@Payload() id: string) {
+    return this.productosService.findOne(id);
   }
 
-  @Get()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.KITCHEN_MANAGER)
-  async findAll(@Query('includeInactive') includeInactive?: string) {
-    return await this.productsService.findAll(includeInactive === 'true');
+  @MessagePattern({ cmd: 'update_product' })
+  update(@Payload() data: { id: string; updateProductDto: UpdateProductDto }) {
+    return this.productosService.update(data.id, data.updateProductDto);
   }
 
-  @Get('category/:categoryId')
-  async findByCategory(@Param('categoryId') categoryId: string) {
-    return await this.productsService.findByCategory(categoryId);
+  @MessagePattern({ cmd: 'remove_product' })
+  remove(@Payload() id: string) {
+    return this.productosService.remove(id);
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return await this.productsService.findOne(id);
+  // Extras que tenías en el código
+  @MessagePattern({ cmd: 'find_available_products' })
+  findAvailable() {
+    return this.productosService.findAvailable();
   }
 
-  @Patch(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
-  async update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return await this.productsService.update(id, updateProductDto);
+  @MessagePattern({ cmd: 'search_products' })
+  search(@Payload() query: string) {
+    return this.productosService.search(query);
   }
 
-  @Patch(':id/toggle-availability')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.KITCHEN_MANAGER)
-  async toggleAvailability(@Param('id') id: string) {
-    return await this.productsService.toggleAvailability(id);
-  }
-
-  @Delete(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
-  async remove(@Param('id') id: string) {
-    await this.productsService.remove(id);
-    return { message: 'Producto eliminado correctamente' };
+  @MessagePattern({ cmd: 'toggle_product_availability' })
+  toggleAvailability(@Payload() id: string) {
+    return this.productosService.toggleAvailability(id);
   }
 }
