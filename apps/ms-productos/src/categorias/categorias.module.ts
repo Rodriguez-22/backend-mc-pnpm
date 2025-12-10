@@ -1,13 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CategoriesController } from './categorias.controller';
-import { CategoriesService } from './categorias.service';
-import { Category } from '../../../../libs/common/src/entities/ms-productos/categoria.entity'; // Asegúrate de mover la entidad aquí
+import { CategoriasService } from './categorias.service';
+import { CategoriasController } from './categorias.controller';
+import { Category } from '@app/common'; // Importamos la entidad desde tu librería compartida
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Category])],
-  controllers: [CategoriesController],
-  providers: [CategoriesService],
-  exports: [CategoriesService], // Exportamos el servicio para usarlo en ProductsModule
+  imports: [
+    // 👇 Esto crea el repositorio de Categorías para este módulo
+    TypeOrmModule.forFeature([Category]), 
+  ],
+  controllers: [CategoriasController],
+  providers: [CategoriasService],
+  exports: [CategoriasService], // Útil si ProductosModule necesita verificar categorías
 })
-export class CategoriesModule {}
+export class CategoriasModule {}

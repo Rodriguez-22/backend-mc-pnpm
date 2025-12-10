@@ -1,10 +1,8 @@
-// src/modules/products/dto/create-product.dto.ts
 import {
   IsNotEmpty,
   IsString,
   IsNumber,
   IsOptional,
-  IsBoolean,
   IsArray,
   Min,
   IsUUID,
@@ -32,29 +30,8 @@ export class CreateProductDto {
   @IsNotEmpty()
   categoryId: string;
 
-  @IsBoolean()
   @IsOptional()
-  isAvailable?: boolean;
-
-  @IsNumber()
-  @IsOptional()
-  @Min(0)
-  preparationTime?: number;
-
   @IsArray()
-  @IsString({ each: true })
-  @IsOptional()
-  allergens?: string[];
-
-  @IsBoolean()
-  @IsOptional()
-  isVegetarian?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
-  isVegan?: boolean;
-
-  @IsBoolean()
-  @IsOptional()
-  isGlutenFree?: boolean;
+  @IsUUID('4', { each: true }) // ✅ Validamos que sean IDs válidos
+  allergenIds?: string[];      // ✅ Renombrado para coincidir con el servicio
 }

@@ -1,55 +1,39 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
-import { CategoriesService } from './categorias.service';
-import { CreateCategoryDto } from '../../../../libs/common/src/dto/ms-productos/categorias/create-categoria.dto';
-import { UpdateCategoryDto } from '../../../../libs/common/src/dto/ms-productos/categorias/update-categoria.dto';
-import { JwtAuthGuard } from '../../../../libs/common/src/guards/jwt-auth.guard';
-import { RolesGuard } from '../../../../libs/common/src/guards/roles.guard';
-import { Roles } from '../../../../libs/common/src/decorators/roles.decorator';
-import { UserRole } from '../../../../libs/common/src/enums/user-role.enum';
+import { Controller } from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { CategoriasService } from './categorias.service';
+import { CreateCategoryDto, UpdateCategoryDto } from '@app/common';
 
-@Controller('categories')
-export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) {}
+@Controller()
+export class CategoriasController {
+  constructor(private readonly categoriesService: CategoriasService) {}
 
-  // Endpoint público para el menú
-  @Get('menu')
-  async getMenu() {
-    return await this.categoriesService.getMenu();
+  @MessagePattern({ cmd: 'create_category' })
+  create(@Payload() createCategoryDto: CreateCategoryDto) {
+    return this.categoriesService.create(createCategoryDto);
   }
 
-  @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
-  async create(@Body() createCategoryDto: CreateCategoryDto) {
-    return await this.categoriesService.create(createCategoryDto);
+  @MessagePattern({ cmd: 'find_all_categories' })
+  findAll(@Payload() includeInactive: boolean) {
+    return this.categoriesService.findAll(includeInactive);
   }
 
-  @Get()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.KITCHEN_MANAGER)
-  async findAll(@Query('includeInactive') includeInactive?: string) {
-    return await this.categoriesService.findAll(includeInactive === 'true');
+  @MessagePattern({ cmd: 'find_one_category' })
+  findOne(@Payload() id: string) {
+    return this.categoriesService.findOne(id);
   }
 
-  @Get(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN, UserRole.KITCHEN_MANAGER)
-  async findOne(@Param('id') id: string) {
-    return await this.categoriesService.findOne(id);
+  @MessagePattern({ cmd: 'update_category' })
+  update(@Payload() data: { id: string; updateCategoryDto: UpdateCategoryDto }) {
+    return this.categoriesService.update(data.id, data.updateCategoryDto);
   }
 
-  @Patch(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
-  async update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
-    return await this.categoriesService.update(id, updateCategoryDto);
+  @MessagePattern({ cmd: 'remove_category' })
+  remove(@Payload() id: string) {
+    return this.categoriesService.remove(id);
   }
 
-  @Delete(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
-  async remove(@Param('id') id: string) {
-    await this.categoriesService.remove(id);
-    return { message: 'Categoría eliminada correctamente' };
+  @MessagePattern({ cmd: 'get_menu' })
+  getMenu() {
+    return this.categoriesService.getMenu();
   }
 }

@@ -1,79 +1,83 @@
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Category } from '../../../../libs/common/src/entities/ms-productos/categoria.entity';
-import { CreateCategoryDto } from '../../../../libs/common/src/dto/ms-productos/categorias/create-categoria.dto';
-import { UpdateCategoryDto } from '../../../../libs/common/src/dto/ms-productos/categorias/update-categoria.dto';
+import { CreateCategoryDto, UpdateCategoryDto, Category } from '@app/common';
 
 @Injectable()
-export class CategoriesService {
+export class CategoriasService implements OnModuleInit {
+  private readonly logger = new Logger('CategoriasService');
+
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
-  async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
-    const { name } = createCategoryDto;
-    const existing = await this.categoryRepository.findOne({ where: { name } });
-    if (existing) throw new ConflictException(`La categoría "${name}" ya existe`);
-    
-    const category = this.categoryRepository.create(createCategoryDto);
-    return await this.categoryRepository.save(category);
+  async onModuleInit() {
+    this.logger.log('CategoriasService inicializado');
   }
 
-  async findAll(includeInactive = false): Promise<Category[]> {
+  async create(createCategoryDto: CreateCategoryDto) {
+    try {
+      const category = this.categoryRepository.create(createCategoryDto);
+      return await this.categoryRepository.save(category);
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
+  }
+
+  // Ahora acepta el parámetro opcional
+  async findAll(includeInactive: boolean = false) {
     const where = includeInactive ? {} : { isActive: true };
-    return await this.categoryRepository.find({
+    return this.categoryRepository.find({
       where,
-      relations: ['products'],
-      order: { order: 'ASC', name: 'ASC' },
+      order: { name: 'ASC' }
     });
   }
 
-  async findOne(id: string): Promise<Category> {
+  async findOne(id: string) {
     const category = await this.categoryRepository.findOne({
       where: { id },
       relations: ['products'],
     });
-    if (!category) throw new NotFoundException('Categoría no encontrada');
+    if (!category) throw new NotFoundException(`Categoría ${id} no encontrada`);
     return category;
   }
 
-  async update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<Category> {
+  async update(id: string, updateCategoryDto: UpdateCategoryDto) {
     const category = await this.findOne(id);
-    
-    if (updateCategoryDto.name && updateCategoryDto.name !== category.name) {
-      const existing = await this.categoryRepository.findOne({ where: { name: updateCategoryDto.name } });
-      if (existing) throw new ConflictException(`La categoría "${updateCategoryDto.name}" ya existe`);
+    this.categoryRepository.merge(category, updateCategoryDto);
+    try {
+      return await this.categoryRepository.save(category);
+    } catch (error) {
+      this.handleDBExceptions(error);
     }
+  }
 
-    Object.assign(category, updateCategoryDto);
+  async remove(id: string) {
+    const category = await this.findOne(id);
+    category.isActive = false; // Soft delete
     return await this.categoryRepository.save(category);
   }
 
-  async remove(id: string): Promise<void> {
-    const category = await this.findOne(id);
-    if (category.products && category.products.length > 0) {
-      throw new ConflictException('No se puede eliminar una categoría con productos asociados');
-    }
-    await this.categoryRepository.remove(category);
-  }
+  // --- MÉTODO QUE FALTABA ---
 
-  // El menú es fundamentalmente una lista de categorías con sus productos
-  async getMenu(): Promise<Category[]> {
-    return await this.categoryRepository
-      .createQueryBuilder('category')
-      .leftJoinAndSelect('category.products', 'product')
-      .where('category.isActive = :isActive', { isActive: true })
-      .andWhere('product.isActive = :isActive', { isActive: true })
-      .andWhere('product.isAvailable = :isAvailable', { isAvailable: true })
-      .orderBy('category.order', 'ASC')
-      .addOrderBy('category.name', 'ASC')
+  async getMenu() {
+    // Usamos QueryBuilder para filtrar productos inactivos dentro de categorías activas
+    return this.categoryRepository.createQueryBuilder('category')
+      .leftJoinAndSelect('category.products', 'product') // Carga productos
+      .leftJoinAndSelect('product.allergens', 'allergens') // Carga alérgenos del producto
+      .where('category.isActive = :active', { active: true })
+      .andWhere('product.isActive = :active', { active: true }) // Solo productos activos
+      .orderBy('category.name', 'ASC')
       .addOrderBy('product.name', 'ASC')
       .getMany();
+  }
+
+  private handleDBExceptions(error: any) {
+    if (error.code === '23505') {
+      throw new Error('Ya existe una categoría con ese nombre');
+    }
+    this.logger.error(error);
+    throw new Error('Error en BD Categorias');
   }
 }

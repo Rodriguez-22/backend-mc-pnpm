@@ -1,39 +1,19 @@
-// src/modules/products/entities/category.entity.ts
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-} from 'typeorm';
-import { Product } from './productos.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Product } from './productos.entity'; // Asegúrate de que el nombre del archivo sea correcto
 
 @Entity('categories')
 export class Category {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column('text', { unique: true })
   name: string;
 
-  @Column({ nullable: true })
+  @Column('text', { nullable: true })
   description: string;
 
-  @Column({ nullable: true })
-  icon: string; // Nombre del icono o URL
-
-  @Column({ default: 0 })
-  order: number; // Para ordenar las categorías
-
-  @Column({ default: true })
+  @Column('bool', { default: true })
   isActive: boolean;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
   @OneToMany(() => Product, (product) => product.category)
   products: Product[];

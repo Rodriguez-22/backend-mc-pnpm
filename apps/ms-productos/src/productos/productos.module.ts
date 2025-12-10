@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ProductsController } from './productos.controller';
-import { ProductsService } from './productos.service';
-import { Product } from '../../../../libs/common/src/entities/ms-productos/productos.entity';
-import { CategoriesModule } from '../categorias/categorias.module'; // Importante
+import { ProductosService } from './productos.service';
+import { ProductosController } from './productos.controller';
+import { Product, Allergen, Category } from '@app/common'; // Import de la lib
+import { CategoriasModule } from '../categorias/categorias.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Product]), 
-    CategoriesModule // Importamos para usar CategoriesService
+    // Registramos las entidades que este módulo necesita tocar
+    TypeOrmModule.forFeature([Product, Allergen, Category]),
+    CategoriasModule,
   ],
-  controllers: [ProductsController],
-  providers: [ProductsService],
-  exports: [ProductsService],
+  controllers: [ProductosController],
+  providers: [ProductosService],
 })
-export class ProductsModule {}
+export class ProductosModule {}

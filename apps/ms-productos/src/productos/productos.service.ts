@@ -1,105 +1,120 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Product } from '../../../../libs/common/src/entities/ms-productos/productos.entity';
-import { CreateProductDto } from '../../../../libs/common/src/dto/ms-productos/productos/create-productos.dto'
-import { UpdateProductDto } from '../../../../libs/common/src/dto/ms-productos/productos/update-productos.dto';
-import { CategoriesService } from '../categorias/categorias.service'; // Servicio inyectado
+import { Repository, In, ILike } from 'typeorm';
+import { CreateProductDto, UpdateProductDto, Product, Category, Allergen } from '@app/common';
 
 @Injectable()
-export class ProductsService {
+export class ProductosService {
+  private readonly logger = new Logger('ProductosService');
+
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
-    private readonly categoriesService: CategoriesService, // Inyección del servicio de categorías
+    
+    @InjectRepository(Category)
+    private readonly categoryRepository: Repository<Category>,
+
+    @InjectRepository(Allergen)
+    private readonly allergenRepository: Repository<Allergen>,
   ) {}
 
-  async create(createProductDto: CreateProductDto): Promise<Product> {
-    const { categoryId, ...productData } = createProductDto;
-    
-    // Usamos el servicio de categorías para validar
-    const category = await this.categoriesService.findOne(categoryId);
+  async create(createProductDto: CreateProductDto) {
+    const { categoryId, allergenIds, ...productDetails } = createProductDto;
 
-    const product = this.productRepository.create({
-      ...productData,
-      category,
-    });
+    const category = await this.categoryRepository.findOneBy({ id: categoryId });
+    if (!category) {
+      throw new NotFoundException(`Categoría con ID ${categoryId} no encontrada`);
+    }
 
-    return await this.productRepository.save(product);
+    let allergens: Allergen[] = [];
+    if (allergenIds && allergenIds.length > 0) {
+      allergens = await this.allergenRepository.findBy({ id: In(allergenIds) });
+    }
+
+    try {
+      const product = this.productRepository.create({
+        ...productDetails,
+        category,
+        allergens,
+      });
+      return await this.productRepository.save(product);
+    } catch (error) {
+      this.handleDBExceptions(error);
+    }
   }
 
-  async findAll(includeInactive = false): Promise<Product[]> {
+  async findAll(includeInactive: boolean = false) {
     const where = includeInactive ? {} : { isActive: true };
-    return await this.productRepository.find({
+    return this.productRepository.find({
       where,
-      relations: ['category'],
-      order: { name: 'ASC' },
+      relations: ['category', 'allergens'],
+      order: { name: 'ASC' }
     });
   }
 
-  async findAvailable(): Promise<Product[]> {
-    return await this.productRepository.find({
-      where: { isActive: true, isAvailable: true },
-      relations: ['category'],
-      order: { name: 'ASC' },
-    });
-  }
-
-  async findByCategory(categoryId: string): Promise<Product[]> {
-    return await this.productRepository.find({
-      where: {
-        category: { id: categoryId },
-        isActive: true,
-        isAvailable: true,
-      },
-      order: { name: 'ASC' },
-    });
-  }
-
-  async findOne(id: string): Promise<Product> {
+  async findOne(id: string) {
     const product = await this.productRepository.findOne({
       where: { id },
-      relations: ['category'],
+      relations: ['category', 'allergens'],
     });
-    if (!product) throw new NotFoundException('Producto no encontrado');
+    if (!product) throw new NotFoundException(`Producto con ID ${id} no encontrado`);
     return product;
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
-    const product = await this.findOne(id);
-    const { categoryId, ...productData } = updateProductDto;
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    const { categoryId, allergenIds, ...toUpdate } = updateProductDto;
+
+    const product = await this.findOne(id); // Reusa findOne para cargar relaciones
 
     if (categoryId) {
-      const category = await this.categoriesService.findOne(categoryId);
+      const category = await this.categoryRepository.findOneBy({ id: categoryId });
+      if (!category) throw new NotFoundException(`Categoría ${categoryId} no encontrada`);
       product.category = category;
     }
 
-    Object.assign(product, productData);
+    if (allergenIds) {
+      const allergens = await this.allergenRepository.findBy({ id: In(allergenIds) });
+      product.allergens = allergens;
+    }
+
+    this.productRepository.merge(product, toUpdate);
+    return this.productRepository.save(product);
+  }
+
+  async remove(id: string) {
+    const product = await this.findOne(id);
+    product.isActive = false; // Soft Delete
     return await this.productRepository.save(product);
   }
 
-  async toggleAvailability(id: string): Promise<Product> {
+  // --- MÉTODOS QUE FALTABAN ---
+
+  async findAvailable() {
+    return this.productRepository.find({
+      where: { isActive: true },
+      relations: ['category', 'allergens'],
+    });
+  }
+
+  async search(query: string) {
+    // Busca coincidencias en nombre O descripción (case insensitive)
+    return this.productRepository.find({
+      where: [
+        { name: ILike(`%${query}%`), isActive: true },
+        { description: ILike(`%${query}%`), isActive: true },
+      ],
+      relations: ['category', 'allergens'],
+    });
+  }
+
+  async toggleAvailability(id: string) {
     const product = await this.findOne(id);
-    product.isAvailable = !product.isAvailable;
+    product.isActive = !product.isActive;
     return await this.productRepository.save(product);
   }
 
-  async remove(id: string): Promise<void> {
-    const product = await this.findOne(id);
-    await this.productRepository.remove(product);
-  }
-
-  async search(query: string): Promise<Product[]> {
-    return await this.productRepository
-      .createQueryBuilder('product')
-      .leftJoinAndSelect('product.category', 'category')
-      .where('product.isActive = :isActive', { isActive: true })
-      .andWhere('product.isAvailable = :isAvailable', { isAvailable: true })
-      .andWhere(
-        '(LOWER(product.name) LIKE LOWER(:query) OR LOWER(product.description) LIKE LOWER(:query))',
-        { query: `%${query}%` },
-      )
-      .orderBy('product.name', 'ASC')
-      .getMany();
+  private handleDBExceptions(error: any) {
+    this.logger.error(error);
+    throw new Error('Error al gestionar productos. Revisa los logs.');
   }
 }
