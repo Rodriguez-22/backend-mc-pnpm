@@ -1,8 +1,8 @@
 # Build Stage
-FROM node:20-alpine
+FROM node:20
 
 # Argumentos para el contexto de build y el nombre del microservicio
-ARG CONTEXT
+ARG CONTEXTO
 ARG MICROSERVICIO
 ARG APP_MS=./apps/${MICROSERVICIO}
 
