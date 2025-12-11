@@ -36,8 +36,12 @@ COPY libs ./libs
 COPY ${APP_MS}/src ./${APP_MS}/src 
 
 # --------------------------------------------------------------------------
-# PASO 3: COMPILACIÓN DEL CÓDIGO (¡CORRECCIÓN CLAVE!)
-# Forzamos a 'nest build' a usar el tsconfig.build.json de la app.
+# ¡CORRECCIÓN! Copiar el tsconfig.build.json de la aplicación a su carpeta:
+# --------------------------------------------------------------------------
+COPY ${APP_MS}/tsconfig.build.json ./${APP_MS}/tsconfig.build.json 
+
+# --------------------------------------------------------------------------
+# PASO 3: COMPILACIÓN DEL CÓDIGO (Usando la configuración recién copiada)
 # --------------------------------------------------------------------------
 RUN nest build ${MICROSERVICIO} --config ${APP_MS}/tsconfig.build.json 
 
