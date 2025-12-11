@@ -36,14 +36,10 @@ COPY libs ./libs
 COPY ${APP_MS}/src ./${APP_MS}/src 
 
 # --------------------------------------------------------------------------
-# ¡PASO CRÍTICO AÑADIDO!
-# Copiar el archivo de configuración TypeScript específico de la aplicación
+# PASO 3: COMPILACIÓN DEL CÓDIGO (¡CORRECCIÓN CLAVE!)
+# Forzamos a 'nest build' a usar el tsconfig.build.json de la app.
 # --------------------------------------------------------------------------
-
-# --------------------------------------------------------------------------
-# PASO 3: COMPILACIÓN DEL CÓDIGO
-# --------------------------------------------------------------------------
-RUN pnpm build ${MICROSERVICIO} 
+RUN nest build ${MICROSERVICIO} --config ${APP_MS}/tsconfig.build.json 
 
 # PASO 4: Preparación final y ejecución
 # Copiar el script de inicio
