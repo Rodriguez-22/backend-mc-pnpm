@@ -4,7 +4,7 @@ main() {
   # Ejecutar el microservicio Client Gateway en modo desarrollo
   # Se asume que el script 'start:client-gateway:dev' está definido
   # en el package.json principal.
-  pnpm start:client-gateway:dev
+  pnpm start:gateway:dev
 }
 
 main
