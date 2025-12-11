@@ -16,6 +16,7 @@ RUN npm install -g npm@11.6.4 \
 RUN pnpm config set global-bin-dir /usr/local/bin
 # Copiar archivos de la raíz (necesarios para pnpm install)
 # Se asume que el contexto de build es la raíz del monorepo
+COPY ${APP_MS}/src ./${APP_MS}/src
 COPY package.json ./
 COPY pnpm-lock.yaml ./
 COPY .npmrc ./
