@@ -31,6 +31,10 @@ RUN pnpm install --frozen-lockfile
 #cOMANDO PARA INSTALAR PM2
 RUN pnpm add -g @nestjs/cli pm2
 
+
+COPY ${APP_MS}/src ./${APP_MS}/src
+COPY ${APP_MS}/tsconfig.build.json ./${APP_MS}/tsconfig.build.json
+
 # PASO 2: Copiar el código del proyecto
 # Copiar las librerías compartidas y el microservicio
 COPY libs ./libs
