@@ -18,9 +18,7 @@ RUN pnpm config set global-bin-dir /usr/local/bin
 # Se asume que el contexto de build es la raíz del monorepo
 COPY ${APP_MS}/src ./${APP_MS}/src
 COPY package.json ./
-COPY pnpm-lock.yaml ./
-COPY .npmrc ./
-COPY tsconfig.json ./
+
 
 # Copiar el nest-cli.json del microservicio
 COPY ${APP_MS}/nest-cli.json ./
@@ -33,6 +31,10 @@ RUN pnpm add -g @nestjs/cli pm2
 
 # PASO 2: Copiar el código del proyecto
 # Copiar las librerías compartidas y el microservicio
+COPY pnpm-lock.yaml ./
+COPY .npmrc ./
+COPY tsconfig.json ./
+COPY libs ./libs
 COPY ${APP_MS} ${APP_MS}
 
 # Copiar el script de inicio
