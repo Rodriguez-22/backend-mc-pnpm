@@ -1,14 +1,129 @@
 services:
-  # Base de datos para Users
-  db-users:
-    image: postgres:15
-    container_name: postgres-users
-    restart: always
+  postgresUsuarios:
+    image: postgres:15-alpine
+    container_name: backend-mc-pnpm
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: db_users
-    ports:
-      - "5432:5432"
+      CONTEXT: /Jose/devops/DespAW/docker
+      #POSTGRES_HOST:
+      #POSTGRES_PORT:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
-      - ./data/users:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT}:5432"
+    networks:
+      - backend-mc-pnpm-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  # Base de datos para Users
+  ms-usuarios:
+    profiles: ["usuarios"]
+    build:
+      context: ${CONTEXTO}
+      dockerfile: ./apps/${MICROSERVICIO}/deploy/Dockerfile
+      args:
+        - CONTEXT=${CONTEXTO}
+        - MICROSERVICIO=${MICROSERVICIO}
+    container_name: backend-mc-users
+    # restart: unless-stopped
+    ports:
+      - "${PORT}:3000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV: production
+    networks:
+      - backend-mc-pnpm-network
+    # healthcheck:
+    #   test: ["CMD", "node", "-e", "require('net').connect(3001)"]
+    #   interval: 10s
+    #   timeout: 50s
+    #   retries: 5
+
+
+
+
+
+  # # Base de datos para Auth
+  # db-auth:
+  #   image: postgres:15
+  #   container_name: postgres-auth
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: admin
+  #     POSTGRES_PASSWORD: admin
+  #     POSTGRES_DB: db_auth
+  #   ports:
+  #     - "5433:5432"
+  #   volumes:
+  #     - ./data/auth:/var/lib/postgresql/data
+
+  # # Base de datos para Products
+  # db-products:
+  #   image: postgres:15
+  #   container_name: postgres-products
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: admin
+  #     POSTGRES_PASSWORD: admin
+  #     POSTGRES_DB: db_products
+  #   ports:
+  #     - "5434:5432"
+  #   volumes:
+  #     - ./data/products:/var/lib/postgresql/data
+
+  # # Base de datos para Orders
+  # db-orders:
+  #   image: postgres:15
+  #   container_name: postgres-orders
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: admin
+  #     POSTGRES_PASSWORD: admin
+  #     POSTGRES_DB: db_orders
+  #   ports:
+  #     - "5435:5432"
+  #   volumes:
+  #     - ./data/orders:/var/lib/postgresql/data
+
+  # # Base de datos para Tables
+  # db-tables:
+  #   image: postgres:15
+  #   container_name: postgres-tables
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: admin
+  #     POSTGRES_PASSWORD: admin
+  #     POSTGRES_DB: db_tables
+  #   ports:
+  #     - "5436:5432"
+  #   volumes:
+  #     - ./data/tables:/var/lib/postgresql/data
+
+  # # Base de datos para QR Codes
+  # db-qrcodes:
+  #   image: postgres:15
+  #   container_name: postgres-qrcodes
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: admin
+  #     POSTGRES_PASSWORD: admin
+  #     POSTGRES_DB: db_qrcodes
+  #   ports:
+  #     - "5437:5432"
+  #   volumes:
+  #     - ./data/qrcodes:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+
+networks:
+  backend-mc-pnpm-network:
+    driver: bridge
