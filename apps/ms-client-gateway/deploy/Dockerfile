@@ -33,7 +33,7 @@ RUN pnpm add -g @nestjs/cli pm2
 
 
 COPY ${APP_MS}/src ./${APP_MS}/src
-COPY ${APP_MS}/tsconfig.build.json ./${APP_MS}/tsconfig.build.json
+COPY ${APP_MS}/tsconfig.build.json ./${APP_MS}/
 
 # PASO 2: Copiar el código del proyecto
 # Copiar las librerías compartidas y el microservicio
