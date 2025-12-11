@@ -23,7 +23,7 @@ COPY .npmrc ./
 COPY tsconfig.json ./
 
 # Copiar el nest-cli.json del microservicio
-COPY ${APP_MS}/nest-cli.json ./
+COPY nest-cli.json ./
 
 # Ejecutar pnpm install. Se beneficia del cache si los archivos copiados no cambian.
 RUN pnpm install --frozen-lockfile
@@ -34,7 +34,6 @@ RUN pnpm add -g @nestjs/cli pm2
 # PASO 2: Copiar el código del proyecto
 # Copiar las librerías compartidas y el microservicio
 COPY libs ./libs
-COPY ${APP_MS} ${APP_MS}
 
 # Copiar el script de inicio
 COPY ${APP_MS}/deploy/start.sh ./
