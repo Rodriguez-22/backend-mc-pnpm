@@ -20,7 +20,7 @@ COPY ${APP_MS}/src ./${APP_MS}/src
 COPY package.json ./
 COPY pnpm-lock.yaml ./
 COPY .npmrc ./
-COPY tsconfig.json ./
+COPY tsconfig.build.json ./
 
 # Copiar el nest-cli.json del microservicio
 COPY nest-cli.json ./
