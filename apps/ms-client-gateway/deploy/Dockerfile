@@ -39,7 +39,6 @@ COPY ${APP_MS}/src ./${APP_MS}/src
 # ¡PASO CRÍTICO AÑADIDO!
 # Copiar el archivo de configuración TypeScript específico de la aplicación
 # --------------------------------------------------------------------------
-COPY ${APP_MS}/tsconfig.app.json ./${APP_MS}/tsconfig.app.json
 
 # --------------------------------------------------------------------------
 # PASO 3: COMPILACIÓN DEL CÓDIGO
