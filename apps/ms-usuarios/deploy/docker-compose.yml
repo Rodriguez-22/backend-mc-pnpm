@@ -30,7 +30,7 @@ services:
     env_file:
       - .env
     environment:
-      - NODE_ENV: production
+      NODE_ENV: production
     networks:
       - backend-mc-pnpm-network
 
