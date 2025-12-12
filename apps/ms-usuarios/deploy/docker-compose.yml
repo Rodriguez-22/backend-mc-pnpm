@@ -16,7 +16,6 @@ services:
       - backend-mc-pnpm-network
   # Base de datos para Users
   ms-usuarios:
-    profiles: ["usuarios"]
     build:
       context: ${CONTEXTO}
       dockerfile: ./apps/${MICROSERVICIO}/deploy/Dockerfile

@@ -1,38 +1,31 @@
 #!/bin/bash
 set -e
 
-echo " [START.SH] Iniciando proceso de arranque..."
+config.git(){
+    git clone https://github.com/Backend-ukiyo/ukiyo-backend.git
+}
 
-# 1. Ejecutar migraciones (ESTO ES LO NUEVO)
-# Esto crea las tablas (users, roles, permisos) si no existen
-echo " Aplicando migraciones a la base de datos..."
-npx prisma migrate deploy --schema=./apps/ms-usuarios/prisma/schema.prisma
+#....
 
-# 2. Ejecutar el build explícitamente
-echo " Ejecutando build..."
-pnpm run build:usuarios
+main(){
+    npm install -g npm@11.7.0
+    npm install -g pm2
 
-# 3. DIAGNÓSTICO: Listar qué se ha creado realmente
-echo " [DIAGNÓSTICO] Listando contenido de la carpeta 'dist':"
-if [ -d "dist" ]; then
-    # Busca archivos hasta 4 niveles de profundidad para ver la estructura
-    find dist -maxdepth 4
-else
-    echo " ERROR: La carpeta 'dist' NO SE HA CREADO después del build."
-    exit 1
-fi
-echo "------------------------------------------------"
+    pnpm install --frozen-lockfile
 
-# 4. Intentar localizar main.js automáticamente
-echo " Buscando 'main.js'..."
-ARCHIVO_MAIN=$(find dist -name "main.js" | head -n 1)
+    echo "Data Base: $DB_NAME"
 
-if [ -z "$ARCHIVO_MAIN" ]; then
-    echo " ERROR CRÍTICO: No se encontró 'main.js' en ninguna subcarpeta de dist."
-    exit 1
-else
-    echo " Archivo encontrado en: $ARCHIVO_MAIN"
-    echo " Lanzando PM2..."
-    # Ejecutamos PM2 usando la ruta que hemos encontrado dinámicamente
-    pm2 start "$ARCHIVO_MAIN" --name "ms-usuarios" --no-daemon
-fi
+    cd apps/ms-usuarios
+    pnpm exec prisma generate
+
+    pnpm exec prisma migrate deploy
+    
+    cd ../..
+    
+    pm2 delete ms-usuarios 2>/dev/null || true
+    
+    pm2 start pnpm --name "ms-usuarios" -- start:dev:usuarios
+
+}
+main
+tail -f /dev/null
