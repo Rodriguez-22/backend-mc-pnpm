@@ -25,7 +25,7 @@ import { GestionPermisosController } from './modulos/ms-usuarios/permisos.contro
         transport: Transport.TCP,
         options: {
           host: process.env.MS_USERS_HOST || 'localhost',
-          port: parseInt(process.env.MS_USERS_PORT || '3001'),
+          port: parseInt(process.env.MS_USERS_PORT || '3000'),
         },
       },
       {
