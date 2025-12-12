@@ -23,7 +23,7 @@
     "start:gateway:debug": "nest start ms-client-gateway --debug --watch",
     "start:productos:debug": "nest start ms-productos --debug --watch",
     "start:usuarios:debug": "nest start ms-usuarios --debug --watch",
-    "start:prod:gateway": "node dist/apps/ms-gateway/main",
+    "start:prod:gateway": "node dist/apps/ms-client-gateway/main",
     "start:prod:usuarios": "node dist/apps/ms-usuarios/main",
     "start:prod:productos": "node dist/apps/ms-productos/main",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"libs/**/*.ts\"",
