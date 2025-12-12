@@ -5,7 +5,7 @@ echo " [START.SH] Iniciando proceso de arranque..."
 
 # 1. Ejecutar el build explícitamente
 echo " Ejecutando build..."
-pnpm run build:gateway
+pnpm run build:usuarios
 
 # 2. DIAGNÓSTICO: Listar qué se ha creado realmente
 echo " [DIAGNÓSTICO] Listando contenido de la carpeta 'dist':"
@@ -29,5 +29,5 @@ else
     echo " Archivo encontrado en: $ARCHIVO_MAIN"
     echo " Lanzando PM2..."
     # Ejecutamos PM2 usando la ruta que hemos encontrado dinámicamente
-    pm2 start "$ARCHIVO_MAIN" --name "gateway" --no-daemon
+    pm2 start "$ARCHIVO_MAIN" --name "ms-usuarios" --no-daemon
 fi
