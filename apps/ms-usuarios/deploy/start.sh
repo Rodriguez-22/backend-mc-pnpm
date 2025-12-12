@@ -3,11 +3,16 @@ set -e
 
 echo " [START.SH] Iniciando proceso de arranque..."
 
-# 1. Ejecutar el build explícitamente
+# 1. Ejecutar migraciones (ESTO ES LO NUEVO)
+# Esto crea las tablas (users, roles, permisos) si no existen
+echo " Aplicando migraciones a la base de datos..."
+npx prisma migrate deploy --schema=./apps/ms-usuarios/prisma/schema.prisma
+
+# 2. Ejecutar el build explícitamente
 echo " Ejecutando build..."
 pnpm run build:usuarios
 
-# 2. DIAGNÓSTICO: Listar qué se ha creado realmente
+# 3. DIAGNÓSTICO: Listar qué se ha creado realmente
 echo " [DIAGNÓSTICO] Listando contenido de la carpeta 'dist':"
 if [ -d "dist" ]; then
     # Busca archivos hasta 4 niveles de profundidad para ver la estructura
@@ -18,7 +23,7 @@ else
 fi
 echo "------------------------------------------------"
 
-# 3. Intentar localizar main.js automáticamente
+# 4. Intentar localizar main.js automáticamente
 echo " Buscando 'main.js'..."
 ARCHIVO_MAIN=$(find dist -name "main.js" | head -n 1)
 
