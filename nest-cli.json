@@ -16,7 +16,7 @@
       "entryFile": "main",
       "sourceRoot": "apps/ms-client-gateway/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/ms-client-gateway/tsconfig.app.json"
+        "tsConfigPath": "apps/ms-client-gateway/tsconfig.build.json"
       }
     },
     "ms-usuarios": {
