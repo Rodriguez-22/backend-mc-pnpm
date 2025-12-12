@@ -26,11 +26,12 @@ services:
     container_name: backend-mc-users
     # restart: unless-stopped
     ports:
-      - "${PORT}:3000"
+      - "${PORT}:3001"
     env_file:
       - .env
     environment:
       NODE_ENV: production
+      DATABASE_URL: "postgresql://${DB_USERNAME}:${DB_PASSWORD}@postgresUsuarios:5432/${DB_NAME}?schema=public"
     networks:
       - backend-mc-pnpm-network
 
