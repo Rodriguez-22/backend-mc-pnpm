@@ -1,26 +1,52 @@
 # Build Stage
-FROM node:20-alpine
+FROM node:20
 
-# Instalar git en Alpine --> usa sh
-ARG CONTEXT
+# Argumentos para el contexto de build y el nombre del microservicio
+ARG CONTEXTO
 ARG MICROSERVICIO
 ARG APP_MS=./apps/${MICROSERVICIO}
 
-# ENV PROYECTO="./proyectos/backend-mc-pnpm"
-# ENV MS_GW="./proyectos/backend-mc-pnpm/apps/ms-usuarios"
 WORKDIR /app
-COPY ${MS_GW}/deploy/start.sh .
-COPY ${PROYECTO}/package.json .
-COPY ${PROYECTO}/pnpm-lock.yaml .
-COPY ${PROYECTO}/.npmrc .
-COPY ${PROYECTO}/tsconfig.json .
-COPY ${MS_GW}/nest-cli.json .
 
-COPY /libs ./libs
-COPY ./apps/${MICROSERVICIO} ./apps/${MICROSERVICIO}
+# PASO 1: Instalación de herramientas y dependencias (OPTIMIZADO)
+# Instalar pnpm globalmente
+RUN npm install -g npm@11.6.4 \
+    && npm install -g pnpm
 
-#RUN chmod +x ./start.sh
+RUN pnpm config set global-bin-dir /usr/local/bin
+# Copiar archivos de la raíz (necesarios para pnpm install)
+# Se asume que el contexto de build es la raíz del monorepo
+COPY ${APP_MS}/src ./${APP_MS}/src
+COPY package.json ./
+COPY pnpm-lock.yaml ./
+COPY .npmrc ./
+COPY tsconfig.json ./
+
+# Copiar el nest-cli.json del microservicio
+COPY nest-cli.json ./
+
+# Ejecutar pnpm install. Se beneficia del cache si los archivos copiados no cambian.
+RUN pnpm install --frozen-lockfile
+
+#cOMANDO PARA INSTALAR PM2
+RUN pnpm add -g @nestjs/cli pm2
+
+
+COPY ${APP_MS}/src ./${APP_MS}/src
+COPY ${APP_MS}/tsconfig.build.json ./${APP_MS}/
+
+# PASO 2: Copiar el código del proyecto
+# Copiar las librerías compartidas y el microservicio
+COPY libs ./libs
+
+
+# Copiar el script de inicio
+COPY ${APP_MS}/deploy/start.sh ./
+
+# Asegurar permisos de ejecución
+RUN chmod +x ./start.sh
+
 EXPOSE 3000
 
-#ENTRYPOINT [ "./start.sh" ]
-CMD ["tail", "-f", "/dev/null"]
+# Usar ENTRYPOINT para ejecutar el script de inicio del microservicio
+ENTRYPOINT [ "./start.sh" ]

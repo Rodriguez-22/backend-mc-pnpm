@@ -5,9 +5,6 @@ services:
     env_file:
       - .env
     environment:
-      CONTEXT: /Jose/devops/DespAW/docker
-      #POSTGRES_HOST:
-      #POSTGRES_PORT:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
@@ -17,11 +14,6 @@ services:
       - "${DB_PORT}:5432"
     networks:
       - backend-mc-pnpm-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
   # Base de datos para Users
   ms-usuarios:
     profiles: ["usuarios"]
@@ -41,11 +33,6 @@ services:
       - NODE_ENV: production
     networks:
       - backend-mc-pnpm-network
-    # healthcheck:
-    #   test: ["CMD", "node", "-e", "require('net').connect(3001)"]
-    #   interval: 10s
-    #   timeout: 50s
-    #   retries: 5
 
 
 volumes:
@@ -53,4 +40,4 @@ volumes:
 
 networks:
   backend-mc-pnpm-network:
-    driver: bridge
+    external: true # para la red
