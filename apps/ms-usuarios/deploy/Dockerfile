@@ -43,7 +43,7 @@ COPY libs ./libs
 COPY ${APP_MS}/deploy/start.sh ./
 RUN chmod +x ./start.sh
 
-EXPOSE 3000
+EXPOSE 3001
 
 # Usar ENTRYPOINT para ejecutar el script de inicio del microservicio
 ENTRYPOINT [ "./start.sh" ]

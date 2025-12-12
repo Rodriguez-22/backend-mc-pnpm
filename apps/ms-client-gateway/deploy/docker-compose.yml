@@ -3,29 +3,32 @@ services:
   ms-client-gateway:
     profiles: ["client-gateway"]
     build:
-      # Las variables CONTEXTO y MICROSERVICIO deben definirse
-      # en un archivo .env o en el comando de ejecución de docker-compose
       context: ${CONTEXTO}
       dockerfile: ./apps/${MICROSERVICIO}/deploy/Dockerfile
       args:
         - CONTEXT=${CONTEXTO}
         - MICROSERVICIO=${MICROSERVICIO}
     container_name: backend-mc-client-gateway
-    # restart: unless-stopped # Se puede descomentar si es necesario
     ports:
-      # Mapear el puerto externo (por ejemplo, 4000) al puerto interno 3000
       - "${PORT}:3000"
     env_file:
       - .env
     environment:
       # Configurar el entorno de Node.js
-      NODE_ENV: production 
+      NODE_ENV: production
+      
+      # 👇 ESTAS SON LAS VARIABLES QUE TE FALTABAN:
+      # Apuntan al nombre del contenedor de usuarios (backend-mc-users)
+      MS_USERS_HOST: backend-mc-users
+      MS_USERS_PORT: 3001
+      
+      # Si también vas a usar productos, añade estas:
+      MS_PRODUCTS_HOST: backend-mc-products
+      MS_PRODUCTS_PORT: 3002
+
     networks:
       - backend-mc-pnpm-network
-    # No se necesita 'depends_on' ni 'healthcheck' específico de DB
-
-# No hay sección 'volumes' ya que no se necesita para el gateway sin DB.
 
 networks:
   backend-mc-pnpm-network:
-    driver: bridge
+    external: true
