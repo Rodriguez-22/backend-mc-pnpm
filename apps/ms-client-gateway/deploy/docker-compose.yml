@@ -21,10 +21,6 @@ services:
       # Apuntan al nombre del contenedor de usuarios (backend-mc-users)
       MS_USERS_HOST: backend-mc-users
       MS_USERS_PORT: 3001
-      
-      # Si también vas a usar productos, añade estas:
-      MS_PRODUCTS_HOST: backend-mc-products
-      MS_PRODUCTS_PORT: 3002
 
     networks:
       - backend-mc-pnpm-network

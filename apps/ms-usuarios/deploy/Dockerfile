@@ -24,7 +24,7 @@ COPY apps/${MICROSERVICIO} ./apps/${MICROSERVICIO}
 # RUN chmod +x ./start.sh
 
 # Exponer puerto
-EXPOSE 3000
+EXPOSE 3001
 USER root
 
 # CMD ["./start.sh"]
