@@ -27,5 +27,5 @@ COPY apps/${MICROSERVICIO} ./apps/${MICROSERVICIO}
 EXPOSE 3000
 USER root
 
-# CMD ["./start.sh"]
-CMD ["tail", "-f", "/dev/null"]
+CMD ["./start.sh"]
+#CMD ["tail", "-f", "/dev/null"]
