@@ -25,7 +25,7 @@ main(){
     
     pm2 delete ms-usuarios 2>/dev/null || true
     
-    pm2 start pnpm --name "ms-usuarios" -- start:dev:usuarios
+    pm2 start pnpm --name "ms-usuarios" -- start:usuarios:dev
 
 }
 main
