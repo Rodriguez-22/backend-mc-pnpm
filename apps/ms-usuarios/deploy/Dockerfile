@@ -6,7 +6,7 @@ ARG APP_MS=./apps/${MICROSERVICIO}
 
 WORKDIR /app
 
-RUN apk add --no-cache openssl
+RUN apk add --no-cache openssl git bash
 
 COPY ${APP_MS}/deploy/start.sh .
 # Copiar archivos de configuración
@@ -27,5 +27,5 @@ COPY apps/${MICROSERVICIO} ./apps/${MICROSERVICIO}
 EXPOSE 3000
 USER root
 
-CMD ["./start.sh"]
+CMD ["/bin/sh", "./start.sh"]
 #CMD ["tail", "-f", "/dev/null"]
