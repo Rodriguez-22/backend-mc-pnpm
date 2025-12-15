@@ -35,7 +35,7 @@ services:
 
 
 volumes:
-  postgres_data:
+  postgress_data:
 
 networks:
   backend-mc-pnpm-network:
