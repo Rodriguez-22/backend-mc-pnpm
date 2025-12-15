@@ -22,6 +22,10 @@ services:
       MS_USERS_HOST: backend-mc-users
       MS_USERS_PORT: 3001
 
+      # Productos (Puerto 3002) - 👈 ESTO ES LO QUE FALTABA
+      MS_PRODUCTS_HOST: backend-mc-products
+      MS_PRODUCTS_PORT: 3002
+
     networks:
       - backend-mc-pnpm-network
 
