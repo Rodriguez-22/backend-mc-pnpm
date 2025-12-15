@@ -1,4 +1,8 @@
-db-products:
+version: '3'
+
+services:
+  # Base de datos para Products
+  db-products:
     image: postgres:15
     container_name: postgres-products
     restart: always
@@ -10,3 +14,33 @@ db-products:
       - "5434:5432"
     volumes:
       - ./data/products:/var/lib/postgresql/data
+    networks:
+      - backend-mc-pnpm-network
+
+  # Microservicio Productos
+  ms-productos:
+    build:
+      # Contexto: subimos 3 niveles hasta la raíz del monorepo
+      context: ../../../
+      dockerfile: ./apps/ms-productos/deploy/Dockerfile
+      args:
+        - MICROSERVICIO=ms-productos
+    container_name: backend-mc-products
+    ports:
+      - "3002:3002"
+    environment:
+      # Conexión a la BD usando el nombre del contenedor (postgres-products)
+      DATABASE_URL: postgres://admin:admin@postgres-products:5432/db_products
+      MS_PRODUCTS_PORT: 3002
+      NODE_ENV: development
+    depends_on:
+      - db-products
+    networks:
+      - backend-mc-pnpm-network
+
+volumes:
+  postgres_data:
+
+networks:
+  backend-mc-pnpm-network:
+    driver: bridge
