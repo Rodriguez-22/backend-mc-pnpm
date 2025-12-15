@@ -2,7 +2,7 @@
 set -e
 
 config.git(){
-    git clone https://github.com/Backend-ukiyo/ukiyo-backend.git
+    git clone https://github.com/Rodriguez-22/backend-mc-pnpm.git
 }
 
 #....
