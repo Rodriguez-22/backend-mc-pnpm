@@ -12,11 +12,10 @@ main(){
 
     echo "Iniciando Microservicio Productos..."
 
-    # En este caso no hace falta migración manual porque usas synchronize: true en TypeORM
-    
     # Iniciar la aplicación con PM2
-    # Usamos start:dev como en tu package.json, o puedes cambiarlo a start:prod si prefieres el build
-    pm2 start pnpm --name "ms-productos" -- start:dev
+    # IMPORTANTE: Añadimos "ms-productos" al final para decirle a Nest qué proyecto iniciar.
+    # Esto ejecutará: pnpm run start:dev ms-productos -> nest start --watch ms-productos
+    pm2 start pnpm --name "ms-productos" -- run start:dev ms-productos
 }
 main
 tail -f /dev/null
