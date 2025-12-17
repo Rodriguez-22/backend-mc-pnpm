@@ -3,8 +3,8 @@ import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { UsersService } from './usuarios.service';
 // Importamos los formularios de datos (DTOs)
-import { CreateUserDto } from '../../../../libs/common/src/dto/ms-usuarios/create-usuario.dto';
-import { UpdateUserDto } from '../../../../libs/common/src/dto/ms-usuarios/update-usuario.dto';
+import { CreateUserDto } from '@app/common/dto/ms-usuarios/create-usuario.dto';
+import { UpdateUserDto } from '@app/common/dto/ms-usuarios/update-usuario.dto';
 
 @Controller()
 export class UsersController {

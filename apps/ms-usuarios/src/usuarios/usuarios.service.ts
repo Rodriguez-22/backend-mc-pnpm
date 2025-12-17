@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service'; // Nuestra herramienta para hablar con la BD
-import { CreateUserDto } from '../../../../libs/common/src/dto/ms-usuarios/create-usuario.dto';
-import { UpdateUserDto } from '../../../../libs/common/src/dto/ms-usuarios/update-usuario.dto';
+import { CreateUserDto } from '@app/common/dto/ms-usuarios/create-usuario.dto';
+import { UpdateUserDto } from '@app/common/dto/ms-usuarios/update-usuario.dto';
 // Importamos 'bcrypt': una librería famosa para encriptar contraseñas.
 import * as bcrypt from 'bcrypt';
 

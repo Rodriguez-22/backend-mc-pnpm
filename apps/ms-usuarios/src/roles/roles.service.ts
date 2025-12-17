@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service'; // Inyección global
-import { CreateRoleDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-roles/create-role.dto';
-import { UpdateRoleDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-roles/update-role.dto';
+import { CreateRoleDto } from '@app/common/dto/ms-usuarios/ms-roles/create-role.dto';
+import { UpdateRoleDto } from '@app/common/dto/ms-usuarios/ms-roles/update-role.dto';
 
 @Injectable()
 export class RolesService {

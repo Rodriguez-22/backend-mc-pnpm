@@ -3,8 +3,8 @@ import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { ProductosService } from './productos.service';
 // Importamos los "formularios" de datos (DTOs) para asegurar que la información viene bien
-import { CreateProductDto } from '../../../../libs/common/src/dto/ms-productos/productos/create-productos.dto';
-import { UpdateProductDto } from '../../../../libs/common/src/dto/ms-productos/productos/update-productos.dto';
+import { CreateProductDto } from '@app/common';
+import { UpdateProductDto } from '@app/common';
 
 @Controller()
 export class ProductosController {

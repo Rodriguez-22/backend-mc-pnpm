@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 // Importamos el servicio de Prisma (nuestra herramienta para hablar con la Base de Datos)
 import { PrismaService } from '../prisma/prisma.service';
 // Importamos los formularios de datos (DTOs)
-import { CreatePermisoDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-permisos/create-permiso.dto';
-import { UpdatePermisoDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-permisos/update.permiso.dto';
+import { CreatePermisoDto } from '@app/common/dto/ms-usuarios/ms-permisos/create-permiso.dto';
+import { UpdatePermisoDto } from '@app/common/dto/ms-usuarios/ms-permisos/update.permiso.dto';
 
 @Injectable() // Marca esta clase como un "Servicio" útil que otros pueden usar.
 export class PermisosService {

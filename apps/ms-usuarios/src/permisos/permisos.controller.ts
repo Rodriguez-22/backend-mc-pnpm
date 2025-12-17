@@ -3,8 +3,8 @@ import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { PermisosService } from './permisos.service';
 // Importamos los formularios de datos (DTOs) para saber qué información nos llega
-import { CreatePermisoDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-permisos/create-permiso.dto';
-import { UpdatePermisoDto } from '../../../../libs/common/src/dto/ms-usuarios/ms-permisos/update.permiso.dto';
+import { CreatePermisoDto } from '@app/common/dto/ms-usuarios/ms-permisos/create-permiso.dto';
+import { UpdatePermisoDto } from '@app/common/dto/ms-usuarios/ms-permisos/update.permiso.dto';
 
 @Controller()
 export class PermisosController {
