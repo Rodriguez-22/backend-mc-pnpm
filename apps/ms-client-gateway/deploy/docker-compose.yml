@@ -1,34 +1,34 @@
 services:
-  # Servicio para el Client Gateway
+  # Servicio principal (Puerta de enlace)
   ms-client-gateway:
-    profiles: ["client-gateway"]
+    profiles: ["client-gateway"] # Etiqueta para encender solo este servicio si quieres
     build:
-      context: ${CONTEXTO}
-      dockerfile: ./apps/${MICROSERVICIO}/deploy/Dockerfile
-      args:
+      context: ${CONTEXTO} # Carpeta raíz del proyecto
+      dockerfile: ./apps/${MICROSERVICIO}/deploy/Dockerfile # La "receta" para instalarlo
+      args: # Variables usadas solo al construir la imagen
         - CONTEXT=${CONTEXTO}
         - MICROSERVICIO=${MICROSERVICIO}
-    container_name: backend-mc-client-gateway
+    container_name: backend-mc-client-gateway # Nombre "humano" del contenedor
     ports:
-      - "${PORT}:3000"
+      - "${PORT}:3000" # Conexión: Tu Puerto PC -> Puerto Interno del contenedor
     env_file:
-      - .env
+      - .env # Carga las contraseñas y configuración del archivo .env
     environment:
-      # Configurar el entorno de Node.js
-      NODE_ENV: production
+      # --- Configuración interna ---
+      NODE_ENV: production # Modo producción (más rápido/seguro)
       
-      # 👇 ESTAS SON LAS VARIABLES QUE TE FALTABAN:
-      # Apuntan al nombre del contenedor de usuarios (backend-mc-users)
+      # --- Conexión con otros servicios ---
+      # Le dice dónde encontrar al servicio de usuarios
       MS_USERS_HOST: backend-mc-users
       MS_USERS_PORT: 3001
 
-      # Productos (Puerto 3002) - 👈 ESTO ES LO QUE FALTABA
+      # Le dice dónde encontrar al servicio de productos
       MS_PRODUCTS_HOST: backend-mc-products
       MS_PRODUCTS_PORT: 3002
 
     networks:
-      - backend-mc-pnpm-network
+      - backend-mc-pnpm-network # Se une a la red compartida para "ver" a los demás
 
 networks:
   backend-mc-pnpm-network:
-    external: true
+    external: true # La red ya existe (no la crea de nuevo)

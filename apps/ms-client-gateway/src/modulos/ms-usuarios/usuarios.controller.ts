@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Inject } from '@nestjs/common';
+import { Controller, Post, Body, Inject, Get } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateUserDto } from '@app/common';
 import { MS_USERS } from '../../config/service'; // Asegúrate de que este export exista o usa el string 'MS_USERS'
@@ -12,4 +12,11 @@ export class GestionUsuariosController {
     // Envía el comando 'create_user' que tu microservicio ya está escuchando
     return this.usersClient.send({ cmd: 'create_user' }, createUserDto);
   }
+  
+  @Get()
+    findAll() {
+      return this.usersClient.send({ cmd: 'find_all_users' }, {});
+    }
 }
+
+
