@@ -16,6 +16,8 @@ import { GestionUsuariosController } from './modulos/ms-usuarios/usuarios.contro
 import { GestionRolesController } from './modulos/ms-usuarios/roles.controller';
 import { GestionPermisosController } from './modulos/ms-usuarios/permisos.controller';
 
+import { MS_TABLES } from './config/service';
+import { GatewayTablesController } from './modulos/ms-tables/tables.controller';
 @Module({
   imports: [
     // 👇 AQUÍ ESTÁ LA CLAVE: Registramos los clientes TCP
@@ -35,6 +37,15 @@ import { GestionPermisosController } from './modulos/ms-usuarios/permisos.contro
           host: process.env.MS_PRODUCTS_HOST || 'localhost',
           port: parseInt(process.env.MS_PRODUCTS_PORT || '3002'),
         },
+      
+      },
+      {
+        name: MS_TABLES,
+        transport: Transport.TCP,
+        options: {
+          host: process.env.MS_TABLES_HOST || 'localhost',
+          port: parseInt(process.env.MS_TABLES_PORT || '3003'),
+        },
       },
     ]),
   ],
@@ -48,7 +59,10 @@ import { GestionPermisosController } from './modulos/ms-usuarios/permisos.contro
     // Controladores de Usuarios
     GestionUsuariosController,
     GestionRolesController,
-    GestionPermisosController
+    GestionPermisosController,
+
+    // Controladores de Tables
+    GatewayTablesController
   ],
   providers: [AppService],
 })
