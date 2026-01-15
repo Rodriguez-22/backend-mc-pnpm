@@ -7,14 +7,9 @@ export class CreatePermisoDto {
 
   @IsString()
   @IsNotEmpty()
-  id: string;
-
-
-  @IsString()
-  @IsNotEmpty()
-  action: string;
+  action: string; // Ejemplo: "read"
 
   @IsString()
   @IsNotEmpty()
-  resource: string;
+  resource: string; // Ejemplo: "products"
 }
