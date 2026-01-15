@@ -20,7 +20,7 @@ services:
       # Conecta el puerto de tu ordenador (${DB_PORT}) con el puerto interno de la base de datos (5432).
       - "${DB_PORT}:5432"
     networks:
-      - backend-mc-pnpm-network # Se conecta a la red compartida del proyecto.
+      - tito-network # Se conecta a la red compartida del proyecto.
 
   # --- SERVICIO 2: TU MICROSERVICIO (La App) ---
   ms-usuarios:
