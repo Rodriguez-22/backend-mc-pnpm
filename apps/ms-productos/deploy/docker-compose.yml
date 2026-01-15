@@ -32,12 +32,15 @@ services:
     container_name: tito-ms-productos
     ports:
       - "3002:3002" # Accesible en localhost:3002
+    env_file:
+      - .env # Carga las contraseñas y configuración del archivo .env
     environment:
       # ¡IMPORTANTE! Aquí le decimos cómo conectar con SU base de datos.
       # Fíjate que usa 'postgres-products' (el nombre del contenedor de arriba) como dirección.
       DATABASE_URL: postgres://admin:admin@postgres-products:5432/db_products
       MS_PRODUCTS_PORT: 3002
       NODE_ENV: development
+      NATS_SERVERS: "nats://nats-server1:4222"
     depends_on:
       - db-products # Espera a que la BD arranque antes de iniciarse él
     networks:
