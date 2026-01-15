@@ -4,8 +4,9 @@ services:
     container_name: nats-server1
     restart: unless-stopped
     command:
-      - js
-      - -m 8222
+      - "-js"
+      - "-m"
+      - "8222"
     ports:
       - "4222:4222" # Cliente NATS
       - "8222:8222" # Monitoring HTTP
