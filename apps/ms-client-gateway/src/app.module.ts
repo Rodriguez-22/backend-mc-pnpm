@@ -18,7 +18,7 @@ import { GestionPermisosController } from './modulos/ms-usuarios/permisos.contro
 
 import { MS_TABLES } from './config/service';
 import { GatewayTablesController } from './modulos/ms-tables/tables.controller';
-import { envs } from 'apps/ms-productos/src/config/envs';
+import { envs } from './config';
 @Module({
   imports: [
     // 👇 AQUÍ ESTÁ LA CLAVE: Registramos los clientes TCP
