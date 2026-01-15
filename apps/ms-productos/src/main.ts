@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';
-import { envs } from 'apps/ms-client-gateway/src/config';
+import { envs } from './config/envs';
 
 async function bootstrap() {
   const logger = new Logger('MsProductos');
