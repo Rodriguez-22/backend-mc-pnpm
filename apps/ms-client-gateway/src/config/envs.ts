@@ -36,43 +36,38 @@ interface EnvVars {
   NATS_SERVERS: string[];
 }
 
+// ... (imports e interface se mantienen igual)
+
 const envVarsSchema = joi.object({
   PORT: joi.number().required(),
 
-  // Users
+  // Servicios que SÍ tienes (obligatorios)
   MS_USERS_HOST: joi.string().required(),
   MS_USERS_PORT: joi.number().required(),
-
-  // Auth
-  MS_AUTH_HOST: joi.string().required(),
-  MS_AUTH_PORT: joi.number().required(),
-
-  // Products
   MS_PRODUCTS_HOST: joi.string().required(),
   MS_PRODUCTS_PORT: joi.number().required(),
 
-  // Orders
-  MS_ORDERS_HOST: joi.string().required(),
-  MS_ORDERS_PORT: joi.number().required(),
+  // Servicios que NO tienes aún (hazlos opcionales quitando el .required())
+  MS_AUTH_HOST: joi.string(),
+  MS_AUTH_PORT: joi.number(),
+  MS_ORDERS_HOST: joi.string(),
+  MS_ORDERS_PORT: joi.number(),
+  MS_TABLES_HOST: joi.string(),
+  MS_TABLES_PORT: joi.number(),
+  MS_QRCODES_HOST: joi.string(),
+  MS_QRCODES_PORT: joi.number(),
 
-  // Tables
-  MS_TABLES_HOST: joi.string().required(),
-  MS_TABLES_PORT: joi.number().required(),
-
-  // QR Codes
-  MS_QRCODES_HOST: joi.string().required(),
-  MS_QRCODES_PORT: joi.number().required(),
-
-  // JWT
+  // Otros requerimientos
   JWT_SECRET: joi.string().required(),
-
-  // NATS
   NATS_SERVERS: joi.array().items(joi.string()).required(),
 }).unknown(true);
 
+// --- PROTECCIÓN PARA EL SPLIT ---
+const rawNatsServers = process.env.NATS_SERVERS ? process.env.NATS_SERVERS.split(',') : [];
+
 const { error, value } = envVarsSchema.validate({
   ...process.env,
-  NATS_SERVERS: process.env.NATS_SERVERS.split(',')
+  NATS_SERVERS: rawNatsServers
 });
 
 if (error) {
@@ -84,16 +79,15 @@ const envVars: EnvVars = value;
 export const envs = {
   port: envVars.PORT,
 
-  // Microservices URLs
+  // Microservices URLs (Usa valores por defecto si no existen para evitar URLs vacías)
   usersServiceUrl: `http://${envVars.MS_USERS_HOST}:${envVars.MS_USERS_PORT}`,
-  authServiceUrl: `http://${envVars.MS_AUTH_HOST}:${envVars.MS_AUTH_PORT}`,
   productsServiceUrl: `http://${envVars.MS_PRODUCTS_HOST}:${envVars.MS_PRODUCTS_PORT}`,
-  ordersServiceUrl: `http://${envVars.MS_ORDERS_HOST}:${envVars.MS_ORDERS_PORT}`,
-  tablesServiceUrl: `http://${envVars.MS_TABLES_HOST}:${envVars.MS_TABLES_PORT}`,
-  qrCodesServiceUrl: `http://${envVars.MS_QRCODES_HOST}:${envVars.MS_QRCODES_PORT}`,
+  
+  authServiceUrl: envVars.MS_AUTH_HOST ? `http://${envVars.MS_AUTH_HOST}:${envVars.MS_AUTH_PORT}` : null,
+  ordersServiceUrl: envVars.MS_ORDERS_HOST ? `http://${envVars.MS_ORDERS_HOST}:${envVars.MS_ORDERS_PORT}` : null,
+  tablesServiceUrl: envVars.MS_TABLES_HOST ? `http://${envVars.MS_TABLES_HOST}:${envVars.MS_TABLES_PORT}` : null,
+  qrCodesServiceUrl: envVars.MS_QRCODES_HOST ? `http://${envVars.MS_QRCODES_HOST}:${envVars.MS_QRCODES_PORT}` : null,
 
-  // JWT
   jwtSecret: envVars.JWT_SECRET,
-
   natsServers: envVars.NATS_SERVERS,
 };
