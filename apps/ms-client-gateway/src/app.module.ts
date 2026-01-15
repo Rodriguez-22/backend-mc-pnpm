@@ -18,16 +18,16 @@ import { GestionPermisosController } from './modulos/ms-usuarios/permisos.contro
 
 import { MS_TABLES } from './config/service';
 import { GatewayTablesController } from './modulos/ms-tables/tables.controller';
+import { envs } from 'apps/ms-productos/src/config/envs';
 @Module({
   imports: [
     // 👇 AQUÍ ESTÁ LA CLAVE: Registramos los clientes TCP
     ClientsModule.register([
       {
         name: MS_USERS, // 'MS_USERS'
-        transport: Transport.TCP,
+        transport: Transport.NATS,
         options: {
-          host: process.env.MS_USERS_HOST || 'localhost',
-          port: parseInt(process.env.MS_USERS_PORT || '3000'),
+          servers: envs.natsServers
         },
       },
       {
