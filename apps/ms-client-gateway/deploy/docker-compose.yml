@@ -8,7 +8,7 @@ services:
       args: # Variables usadas solo al construir la imagen
         - CONTEXT=${CONTEXTO}
         - MICROSERVICIO=${MICROSERVICIO}
-    container_name: backend-mc-client-gateway # Nombre "humano" del contenedor
+    container_name: tito-ms-gateway # Nombre "humano" del contenedor
     ports:
       - "${PORT}:3000" # Conexión: Tu Puerto PC -> Puerto Interno del contenedor
     env_file:
@@ -19,16 +19,15 @@ services:
       
       # --- Conexión con otros servicios ---
       # Le dice dónde encontrar al servicio de usuarios
-      MS_USERS_HOST: backend-mc-users
+      MS_USERS_HOST: tito-ms-usuarios
       MS_USERS_PORT: 3001
 
       # Le dice dónde encontrar al servicio de productos
-      MS_PRODUCTS_HOST: backend-mc-products
+      MS_PRODUCTS_HOST: tito-ms-productos
       MS_PRODUCTS_PORT: 3002
 
     networks:
-      - backend-mc-pnpm-network # Se une a la red compartida para "ver" a los demás
-
+      - tito-network # Se une a la red compartida para "ver" a los demás
 networks:
-  backend-mc-pnpm-network:
+  tito-network:
     external: true # La red ya existe (no la crea de nuevo)

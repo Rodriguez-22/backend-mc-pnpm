@@ -2,7 +2,7 @@ services:
   # --- SERVICIO 1: LA BASE DE DATOS ---
   postgresUsuarios:
     image: postgres:15-alpine # Usamos una versión "ligera" (Alpine) de PostgreSQL.
-    container_name: db_users # Le ponemos nombre al contenedor para encontrarlo fácil.
+    container_name: tito-ms-usuarios # Le ponemos nombre al contenedor para encontrarlo fácil.
     env_file:
       - .env # Le dice: "Lee las contraseñas y configuración del archivo .env".
     environment:
@@ -41,7 +41,7 @@ services:
     environment:
       NODE_ENV: production # Le dice a Node.js que funcione en modo optimizado (Producción).
     networks:
-      - backend-mc-pnpm-network # Se conecta a la misma red para poder "hablar" con la base de datos.
+      - tito-network # Se conecta a la misma red para poder "hablar" con la base de datos.
 
 # --- ZONA DE VOLÚMENES ---
 volumes:
@@ -49,5 +49,5 @@ volumes:
 
 # --- ZONA DE REDES ---
 networks:
-  backend-mc-pnpm-network:
+  tito-network:
     external: true # Le dice: "No crees una red nueva, usa la que ya existe llamada así".

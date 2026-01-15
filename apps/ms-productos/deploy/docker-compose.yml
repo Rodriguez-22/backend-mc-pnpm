@@ -29,7 +29,7 @@ services:
       dockerfile: ./apps/ms-productos/deploy/Dockerfile # La receta de instalación
       args:
         - MICROSERVICIO=ms-productos # Le dice qué carpeta compilar
-    container_name: backend-mc-products
+    container_name: tito-ms-productos
     ports:
       - "3002:3002" # Accesible en localhost:3002
     environment:
@@ -41,12 +41,12 @@ services:
     depends_on:
       - db-products # Espera a que la BD arranque antes de iniciarse él
     networks:
-      - backend-mc-pnpm-network
+      - tito-network
 
 # Configuración extra (volúmenes y redes)
 volumes:
   postgres_data:
 
 networks:
-  backend-mc-pnpm-network:
+  tito-network:
     external: true # Usa la red que creamos manualmente al principio
