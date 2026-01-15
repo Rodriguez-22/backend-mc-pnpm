@@ -26,9 +26,11 @@ const envsSchema = Joi.object({
     NATS_SERVERS: Joi.array().items(Joi.string()).required(),
 }).unknown(true);
 
+const natsRaw = process.env.NATS_SERVERS ? process.env.NATS_SERVERS.split(',') : [];
+
 const { error, value } = envsSchema.validate({
     ...process.env,
-    NATS_SERVERS: process.env.NATS_SERVERS.split(',')
+    NATS_SERVERS: natsRaw
 });
 
 export const envs = {

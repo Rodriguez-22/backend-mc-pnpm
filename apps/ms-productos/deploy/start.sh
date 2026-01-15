@@ -2,25 +2,21 @@
 set -e
 
 main(){
-    # Instalación de herramientas globales
+    # Instalación de herramientas
     npm install -g npm@11.7.0
     npm install -g pnpm
     npm install -g pm2
 
-    # Instalar dependencias del monorepo
+    # Instalar dependencias
     pnpm install --frozen-lockfile
 
     echo "Iniciando Microservicio Productos..."
 
-    echo "Generando cliente de Prisma..."
-    cd apps/ms-productos
-    pnpm exec prisma generate
-    cd ../..
-
-    # Iniciar la aplicación con PM2
-    # IMPORTANTE: Añadimos "ms-productos" al final para decirle a Nest qué proyecto iniciar.
-    # Esto ejecutará: pnpm run start:dev ms-productos -> nest start --watch ms-productos
-    pm2 start pnpm --name "ms-productos" -- start:productos:dev
+    # Borrar proceso antiguo si existe y arrancar
+    pm2 delete ms-productos 2>/dev/null || true
+    
+    # IMPORTANTE: Solo arrancar, SIN líneas de Prisma
+    pm2 start pnpm --name "ms-productos" -- run start:dev ms-productos
 }
 main
 tail -f /dev/null

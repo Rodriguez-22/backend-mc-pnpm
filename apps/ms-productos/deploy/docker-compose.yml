@@ -37,10 +37,16 @@ services:
     environment:
       # ¡IMPORTANTE! Aquí le decimos cómo conectar con SU base de datos.
       # Fíjate que usa 'postgres-products' (el nombre del contenedor de arriba) como dirección.
-      DATABASE_URL: postgres://admin:admin@postgres-products:5432/db_products
+      PORT: 3002
+      DB_NAME: db_products
+      DB_PORT: 5434
+      DB_USERNAME: admin
+      DB_PASSWORD: admin
+      DB_HOST: postgres-products
       MS_PRODUCTS_PORT: 3002
-      NODE_ENV: development
-      NATS_SERVERS: "nats://nats-server1:4222"
+      DATABASE_URL: postgresql://admin:admin@postgres-products:5432/db_products
+      NATS_SERVERS: "nats://nats-server1:4222" # <--- ¡ESTA ES VITAL!
+      NODE_ENV: production
     depends_on:
       - db-products # Espera a que la BD arranque antes de iniciarse él
     networks:
