@@ -20,7 +20,7 @@ services:
       # para no perderlos si borras el contenedor.
       - ./data/products:/var/lib/postgresql/data
     networks:
-      - backend-mc-pnpm-network # Se conecta a la red compartida
+      - tito-network # Se conecta a la red compartida
 
   # --- MICROSERVICIO (TU CÓDIGO) ---
   ms-productos:
