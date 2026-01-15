@@ -12,6 +12,11 @@ main(){
 
     echo "Iniciando Microservicio Productos..."
 
+    echo "Generando cliente de Prisma..."
+    cd apps/ms-productos
+    pnpm exec prisma generate
+    cd ../..
+
     # Iniciar la aplicación con PM2
     # IMPORTANTE: Añadimos "ms-productos" al final para decirle a Nest qué proyecto iniciar.
     # Esto ejecutará: pnpm run start:dev ms-productos -> nest start --watch ms-productos
