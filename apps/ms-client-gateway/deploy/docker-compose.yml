@@ -25,6 +25,8 @@ services:
       # Le dice dónde encontrar al servicio de productos
       MS_PRODUCTS_HOST: tito-ms-productos
       MS_PRODUCTS_PORT: 3002
+      JWT_SECRET: "antas-garrucha"
+      NATS_SERVERS: "nats://tu-servidor-nats:4222"
 
     networks:
       - tito-network # Se une a la red compartida para "ver" a los demás

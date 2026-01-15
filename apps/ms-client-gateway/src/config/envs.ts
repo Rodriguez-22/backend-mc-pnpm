@@ -41,13 +41,13 @@ interface EnvVars {
 const envVarsSchema = joi.object({
   PORT: joi.number().required(),
 
-  // Servicios que SÍ tienes (obligatorios)
+  // SÍ desplegados (Obligatorios)
   MS_USERS_HOST: joi.string().required(),
   MS_USERS_PORT: joi.number().required(),
   MS_PRODUCTS_HOST: joi.string().required(),
   MS_PRODUCTS_PORT: joi.number().required(),
 
-  // Servicios que NO tienes aún (hazlos opcionales quitando el .required())
+  // NO desplegados aún (Hazlos opcionales quitando .required())
   MS_AUTH_HOST: joi.string(),
   MS_AUTH_PORT: joi.number(),
   MS_ORDERS_HOST: joi.string(),
@@ -57,17 +57,17 @@ const envVarsSchema = joi.object({
   MS_QRCODES_HOST: joi.string(),
   MS_QRCODES_PORT: joi.number(),
 
-  // Otros requerimientos
+  // Globales (Déjalos obligatorios pero asegúrate de ponerlos en el Docker)
   JWT_SECRET: joi.string().required(),
   NATS_SERVERS: joi.array().items(joi.string()).required(),
 }).unknown(true);
 
-// --- PROTECCIÓN PARA EL SPLIT ---
-const rawNatsServers = process.env.NATS_SERVERS ? process.env.NATS_SERVERS.split(',') : [];
+// Seguridad: Si NATS_SERVERS no existe, enviamos un array vacío para que no falle el .split()
+const natsRaw = process.env.NATS_SERVERS ? process.env.NATS_SERVERS.split(',') : [];
 
 const { error, value } = envVarsSchema.validate({
   ...process.env,
-  NATS_SERVERS: rawNatsServers
+  NATS_SERVERS: natsRaw
 });
 
 if (error) {
