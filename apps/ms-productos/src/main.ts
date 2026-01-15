@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';
+import { envs } from 'apps/ms-client-gateway/src/config';
 
 async function bootstrap() {
   const logger = new Logger('MsProductos');
@@ -9,12 +10,11 @@ async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
-      transport: Transport.TCP,
+      transport: Transport.NATS,
       options: {
-        host: '0.0.0.0', // Escucha en todas las interfaces (vital para Docker)
-        port: process.env.MS_PRODUCTS_PORT ? parseInt(process.env.MS_PRODUCTS_PORT) : 3002,
-      },
-    },
+        servers: envs.natsServers
+      }
+    }
   );
 
   await app.listen();

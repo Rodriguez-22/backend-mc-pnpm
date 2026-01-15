@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import * as joi from 'joi';
+import { env } from 'process';
 
 interface EnvVars {
   PORT: number;
@@ -30,6 +31,9 @@ interface EnvVars {
 
   // JWT
   JWT_SECRET: string;
+
+  //
+  NATS_SERVERS: string[];
 }
 
 const envVarsSchema = joi.object({
@@ -61,9 +65,15 @@ const envVarsSchema = joi.object({
 
   // JWT
   JWT_SECRET: joi.string().required(),
+
+  // NATS
+  NATS_SERVERS: joi.array().items(joi.string()).required(),
 }).unknown(true);
 
-const { error, value } = envVarsSchema.validate(process.env);
+const { error, value } = envVarsSchema.validate({
+  ...process.env,
+  NATS_SERVERS: process.env.NATS_SERVERS.split(',')
+});
 
 if (error) {
   throw new Error(`Config validation error: ${error.message}`);
@@ -84,4 +94,6 @@ export const envs = {
 
   // JWT
   jwtSecret: envVars.JWT_SECRET,
+
+  natsServers: envVars.NATS_SERVERS,
 };

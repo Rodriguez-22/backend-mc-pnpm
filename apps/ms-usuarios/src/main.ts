@@ -1,14 +1,14 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
+import { envs } from 'apps/ms-client-gateway/src/config/envs';
 
 async function bootstrap() {
  const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
-    transport: Transport.TCP, 
+    transport: Transport.NATS, 
     options: {
-      host: '0.0.0.0',
-      port: 3001, 
-    },
+      servers: envs.natsServers
+    }
   });
   await app.listen();
   console.log('Microservicio Administración escuchando en puerto 3001 via TCP');
