@@ -33,6 +33,10 @@ const { error, value } = envsSchema.validate({
     NATS_SERVERS: natsRaw
 });
 
+if (error) {
+    throw new Error(`Config validation error: ${error.message}`);
+}
+
 export const envs = {
     port: value.PORT,
     dbName: value.DB_NAME,
