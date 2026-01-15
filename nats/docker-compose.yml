@@ -3,7 +3,7 @@ services:
     image: nats:2.10-alpine
     container_name: nats-server1
     restart: unless-stopped
-    command: >
+    command:
       - js
       - -m 8222
     ports:
