@@ -12,7 +12,10 @@ services:
     ports:
       - "${PORT}:3000" # Conexión: Tu Puerto PC -> Puerto Interno del contenedor
     env_file:
-      - .env # Carga las contraseñas y configuración del archivo .env
+      - .app.env # Carga las contraseñas y configuración del archivo .env
+      - ../../../deploy/.env
+    volumes:
+      - ./logs:/root/logs # Carpeta para guardar logs fuera del contenedor
     environment:
       # --- Configuración interna ---
       NODE_ENV: production # Modo producción (más rápido/seguro)
