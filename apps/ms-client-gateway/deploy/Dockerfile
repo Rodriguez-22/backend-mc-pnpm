@@ -4,7 +4,9 @@ ARG CONTEXTO
 ARG MICROSERVICIO
 ARG APP_MS=./apps/${MICROSERVICIO}
 
-RUN apk update && apk add --no-cache git
+# Instalamos git, pnpm y pm2
+RUN apk update && apk add --no-cache git \
+    && npm install -g pnpm pm2
 
 WORKDIR /app
 COPY ${APP_MS}/deploy/start.sh .
