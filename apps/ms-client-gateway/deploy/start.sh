@@ -47,3 +47,16 @@ else
     # --no-daemon mantiene el proceso visible para que Docker no crea que se ha apagado.
     pm2 start "$ARCHIVO_MAIN" --name "gateway" --no-daemon
 fi
+
+
+config_git(){
+    git clone --filter=blob:none --no-checkout &{REPO_GIT} backend-mc-pnpm
+    cd backend-mc-pnpm
+
+    git sparse-checkout init --cone
+
+    git sparse-checkout set apps/${MICROSERVICIO} libs
+    git checkout master
+
+    git pull origin master
+}
