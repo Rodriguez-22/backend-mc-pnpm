@@ -14,6 +14,7 @@ services:
     env_file:
       - .env # Carga las contraseñas y configuración del archivo .env
     volumes:
+      - ../:/app
       - ./logs:/root/logs # Carpeta para guardar logs fuera del contenedor
       - /home/joselico/.ssh:/root/.ssh # Claves SSH para acceder a otros servicios (si hace falta)
     environment:
