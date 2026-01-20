@@ -26,7 +26,7 @@ config_git(){
 echo " [START.SH] Iniciando proceso de arranque..."
 
 # 1. EJECUTAR CONFIGURACIÓN DE GIT (Ahora es lo primero)
-config_git
+# config_git
 
 # 2. CONSTRUCCIÓN (BUILD)
 # Se asume que ahora estamos dentro de 'backend-mc-pnpm' gracias al 'cd' de la función
