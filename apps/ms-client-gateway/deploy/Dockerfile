@@ -1,32 +1,29 @@
 FROM node:20-alpine
 
-# Argumentos (se mantienen por si los usas en otras partes)
+# Argumentos que vienen desde el docker-compose.yml
 ARG MICROSERVICIO
+# Definimos la ruta de la aplicación basándonos en el argumento
+ARG APP_PATH=apps/${MICROSERVICIO}
 
-# 1. Instalamos dependencias del sistema y herramientas de Node
-# Añadimos 'sed' para limpiar archivos de texto si vienen de Windows
+# 1. Instalamos dependencias y herramientas
 RUN apk update && apk add --no-cache git \
     && npm install -g pnpm pm2
 
-# 2. Establecemos el directorio de trabajo
+# 2. Directorio de trabajo
 WORKDIR /app
 
-# 3. Copiamos el script de arranque
-# Si el Dockerfile y start.sh están en la misma carpeta 'deploy', solo necesitamos:
-COPY start.sh .
+# 3. COPIA CORREGIDA: 
+# Como el contexto es la raíz del proyecto, debemos usar la ruta completa al archivo
+COPY ${APP_PATH}/deploy/start.sh /app/start.sh
 
-# 4. CORRECCIONES CRÍTICAS:
-# - Damos permisos de ejecución
-# - Eliminamos posibles finales de línea de Windows (CRLF) que rompen Alpine
-RUN chmod +x ./start.sh && \
-    sed -i 's/\r$//' ./start.sh
+# 4. Permisos y limpieza de formato Windows (CRLF)
+RUN chmod +x /app/start.sh && \
+    sed -i 's/\r$//' /app/start.sh
 
-# 5. Creamos carpeta de logs
+# 5. Logs y exposición
 RUN mkdir -p /root/logs
-
-# Puerto que expone la app
 EXPOSE 3000
 
-# 6. Ejecución
-# Usamos la ruta absoluta para evitar errores de contexto
+# 6. EJECUCIÓN
+# Usamos la ruta absoluta donde copiamos el archivo
 CMD [ "sh", "/app/start.sh" ]
