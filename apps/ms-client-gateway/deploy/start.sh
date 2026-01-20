@@ -29,7 +29,7 @@ echo " [START.SH] Iniciando proceso de arranque..."
 # config_git
 
 # 2. CONSTRUCCIÓN (BUILD)
-# Se asume que ahora estamos dentro de 'backend-mc-pnpm' gracias al 'cd' de la función
+# Se asume que ahora estamos incn dentro de 'backend-mc-pnpm' gracias al 'cd' de la función
 echo " Ejecutando build..."
 pnpm install  # Es recomendable asegurar que las dependencias están ahí antes del build
 pnpm run build
