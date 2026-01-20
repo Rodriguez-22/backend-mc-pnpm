@@ -1,18 +1,32 @@
 FROM node:20-alpine
 
-ARG CONTEXTO
+# Argumentos (se mantienen por si los usas en otras partes)
 ARG MICROSERVICIO
-ARG APP_MS=./apps/${MICROSERVICIO}
 
-# Instalamos git, pnpm y pm2
+# 1. Instalamos dependencias del sistema y herramientas de Node
+# Añadimos 'sed' para limpiar archivos de texto si vienen de Windows
 RUN apk update && apk add --no-cache git \
     && npm install -g pnpm pm2
 
+# 2. Establecemos el directorio de trabajo
 WORKDIR /app
-COPY ${APP_MS}/deploy/start.sh .
-RUN chmod +x ./start.sh
+
+# 3. Copiamos el script de arranque
+# Si el Dockerfile y start.sh están en la misma carpeta 'deploy', solo necesitamos:
+COPY start.sh .
+
+# 4. CORRECCIONES CRÍTICAS:
+# - Damos permisos de ejecución
+# - Eliminamos posibles finales de línea de Windows (CRLF) que rompen Alpine
+RUN chmod +x ./start.sh && \
+    sed -i 's/\r$//' ./start.sh
+
+# 5. Creamos carpeta de logs
 RUN mkdir -p /root/logs
 
+# Puerto que expone la app
 EXPOSE 3000
 
+# 6. Ejecución
+# Usamos la ruta absoluta para evitar errores de contexto
 CMD [ "sh", "/app/start.sh" ]
