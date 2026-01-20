@@ -32,7 +32,7 @@ echo " [START.SH] Iniciando proceso de arranque..."
 # Se asume que ahora estamos dentro de 'backend-mc-pnpm' gracias al 'cd' de la función
 echo " Ejecutando build..."
 pnpm install  # Es recomendable asegurar que las dependencias están ahí antes del build
-pnpm run build:gateway
+pnpm run build
 
 # 3. COMPROBACIÓN (DIAGNÓSTICO)
 echo " [DIAGNÓSTICO] Listando contenido de la carpeta 'dist':"
