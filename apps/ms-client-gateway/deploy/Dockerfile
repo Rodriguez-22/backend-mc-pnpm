@@ -17,9 +17,7 @@ WORKDIR /app
 COPY ${APP_PATH}/deploy/start.sh /app/start.sh
 
 # 4. Permisos y limpieza de formato Windows (CRLF)
-RUN chmod +x /app/start.sh && \
-    sed -i 's/\r$//' /app/start.sh
-
+RUN chmod +x /app/start.sh
 # 5. Logs y exposición
 RUN mkdir -p /root/logs
 EXPOSE 3000
