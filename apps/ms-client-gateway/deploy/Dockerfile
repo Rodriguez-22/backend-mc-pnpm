@@ -14,14 +14,14 @@ WORKDIR /app
 
 # 3. COPIA CORREGIDA: 
 # Como el contexto es la raíz del proyecto, debemos usar la ruta completa al archivo
-COPY ${APP_PATH}/deploy/start.sh /app/start.sh
+COPY ${APP_PATH}/deploy/start.sh /app/deploy/start.sh
 
 # 4. Permisos y limpieza de formato Windows (CRLF)
-RUN chmod +x /app/start.sh
+RUN chmod +x /app/deploy/start.sh
 # 5. Logs y exposición
 RUN mkdir -p /root/logs
 EXPOSE 3000
 
 # 6. EJECUCIÓN
 # Usamos la ruta absoluta donde copiamos el archivo
-CMD [ "sh", "/app/start.sh" ]
+CMD [ "sh", "/app/deploy/start.sh" ]
