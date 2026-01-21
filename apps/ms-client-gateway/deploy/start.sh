@@ -1,62 +1,56 @@
 #!/bin/bash
-# Detener el script si ocurre cualquier error
 set -e
 
-# --- DEFINICIÓN DE FUNCIONES ---
-
+# --- FUNCIONES ---
 config_check_git() {
-    echo " [SSH] Configurando permisos de llaves..."
-    # Ajustamos permisos para que SSH no las rechace por ser "demasiado abiertas"
+    echo " [SSH] Preparando llaves..."
+    mkdir -p /root/.ssh
+    chmod 700 /root/.ssh
+    # Copiamos las llaves mapeadas desde el host si existen
+    cp /root/.ssh_host/* /root/.ssh/ 2>/dev/null || true
+    
     chmod 600 /root/.ssh/id_rsa
     chmod 644 /root/.ssh/id_rsa.pub
-    # Agregamos GitHub a los hosts conocidos para evitar el mensaje de confirmación
     ssh-keyscan github.com >> /root/.ssh/known_hosts
 }
 
 config_git() {
-    echo " [GIT] Clonando repositorio privado..."
-    # Clonamos sin descargar archivos todavía (--no-checkout) para luego filtrar
-    git clone --filter=blob:none --no-checkout ${REPO_GIT} /app/temp_repo
-    cd /app/temp_repo
+    echo " [GIT] Clonando en /app/proyecto..."
+    # Clonamos directamente en una carpeta específica
+    git clone --filter=blob:none --no-checkout ${REPO_GIT} /app/proyecto
+    cd /app/proyecto
 
-    # Configuramos el sparse-checkout para traer solo la app y las libs
     git sparse-checkout init --cone
     git sparse-checkout set apps/${MICROSERVICIO} libs
     
-    echo " [GIT] Descargando archivos (checkout)..."
     git checkout master
     git pull origin master
 }
 
-# --- FLUJO DE EJECUCIÓN ---
+# --- EJECUCIÓN ---
+echo " [START.SH] Iniciando proceso de arranque..."
 
-echo " [START.SH] Iniciando proceso de despliegue desde Git..."
-
-# 1. Preparar SSH
+# 1. SSH y GIT primero
 config_check_git
-
-# 2. Descargar el código
-# Limpiamos /app por si hay restos de intentos anteriores
-rm -rf /app/temp_repo
 config_git
 
-# 3. Instalación de dependencias
-# Entramos a la raíz del repo clonado donde está el pnpm-workspace.yaml
-cd /app/temp_repo
-echo " [PNPM] Instalando dependencias del monorepo..."
+# 2. Ahora que el código está en /app/proyecto, entramos para instalar
+cd /app/proyecto
+
+echo " [PNPM] Instalando dependencias desde la raíz del proyecto..."
+# Ahora pnpm encontrará el package.json y pnpm-workspace.yaml
 pnpm install
 
-# 4. Construcción del Microservicio
+# 3. Construcción
 cd apps/${MICROSERVICIO}
 echo " [NEST] Ejecutando build..."
 pnpm run build
 
-# 5. Localizar dist y arrancar
+# 4. Lanzamiento
 if [ -d "dist" ]; then
-    export RUTA_FINAL="dist"
+    export RUTA="dist"
 else
-    export RUTA_FINAL="../../dist/apps/${MICROSERVICIO}"
+    export RUTA="../../dist/apps/${MICROSERVICIO}"
 fi
 
-echo " [PM2] Lanzando aplicación..."
-pm2-runtime start ${RUTA_FINAL}/main.js --name "${MICROSERVICIO}"
+pm2-runtime start ${RUTA}/main.js --name "${MICROSERVICIO}"
