@@ -14,9 +14,9 @@ services:
     env_file:
       - .env # Carga las contraseñas y configuración del archivo .env
     volumes:
-      - ../:/app
-      - ./logs:/root/logs # Carpeta para guardar logs fuera del contenedor
-      - /home/joselico/.ssh:/root/.ssh # Claves SSH para acceder a otros servicios (si hace falta)
+      - ../../../:/app 
+      - ./logs:/root/logs
+      - /home/joselico/.ssh:/root/.ssh
     environment:
       # --- Configuración interna ---
       NODE_ENV: production # Modo producción (más rápido/seguro)
