@@ -2,15 +2,13 @@
 # Detener el script si ocurre cualquier error
 set -e
 
+# --- FUNCIONES (Opcionales, por si las usas más adelante) ---
 config_git() {
     git clone --filter=blob:none --no-checkout ${REPO_GIT} backend-mc-pnpm
     cd backend-mc-pnpm
-
-
     git sparse-checkout init --cone
     git sparse-checkout set apps/${MICROSERVICIO} libs
     git checkout master
-
     git pull origin master
 }
 
@@ -22,31 +20,30 @@ config_check_git() {
 
 echo " [START.SH] Iniciando proceso de arranque..."
 
-cd /apps
+# 1. IR A LA RAÍZ DEL MONOREPO
+# Docker monta tu proyecto en /app. Aquí es donde está pnpm-workspace.yaml
+cd /app
 
-# 1. INSTALACIÓN
-# Usamos --filter para asegurar que instalamos lo de este micro y sus librerías
-echo " [PNPM] Instalando dependencias..."
+# 2. INSTALACIÓN
+echo " [PNPM] Instalando dependencias desde la raíz..."
 pnpm install
 
-# 2. CONSTRUCCIÓN (BUILD)
-echo " [NEST] Ejecutando build..."
-# Forzamos el nombre del proyecto para que Nest sepa qué compilar
+# 3. CONSTRUCCIÓN (BUILD)
+# Entramos a la carpeta de la aplicación específica
+cd apps/${MICROSERVICIO}
+echo " [NEST] Ejecutando build de ${MICROSERVICIO}..."
 pnpm run build
 
-# 3. COMPROBACIÓN INTELIGENTE (DIAGNÓSTICO)
+# 4. COMPROBACIÓN INTELIGENTE (DIAGNÓSTICO)
 echo " [DIAGNÓSTICO] Localizando carpeta de salida..."
 
-# En monorepos, la carpeta suele estar en la raíz o en la carpeta de la app
-# Probamos las dos rutas más comunes
+# Verificamos si el dist se generó dentro de la app o en la raíz del monorepo
 if [ -d "dist" ]; then
     export RUTA_DIST="dist"
-elif [ -d "../../dist/apps/ms-client-gateway" ]; then
-    export RUTA_DIST="../../dist/apps/ms-client-gateway"
+elif [ -d "../../dist/apps/${MICROSERVICIO}" ]; then
+    export RUTA_DIST="../../dist/apps/${MICROSERVICIO}"
 else
     echo " ERROR: La carpeta 'dist' no se encuentra en ./dist ni en la raíz."
-    # Listamos para debug
-    echo " Contenido actual:"
     ls -F
     exit 1
 fi
@@ -54,7 +51,7 @@ fi
 echo " [OK] Carpeta encontrada en: $RUTA_DIST"
 echo "------------------------------------------------"
 
-# 4. BÚSQUEDA DEL ARCHIVO DE INICIO
+# 5. BÚSQUEDA DEL ARCHIVO DE INICIO
 echo " Buscando 'main.js'..."
 ARCHIVO_MAIN=$(find "$RUTA_DIST" -name "main.js" | head -n 1)
 
@@ -65,7 +62,6 @@ else
     echo " Archivo encontrado en: $ARCHIVO_MAIN"
     echo " Lanzando PM2..."
     
-    # 5. EJECUCIÓN
-    # --no-daemon es vital para que el contenedor de Docker no se cierre
-    pm2-runtime start "$ARCHIVO_MAIN" --name "gateway"
+    # 6. EJECUCIÓN
+    pm2-runtime start "$ARCHIVO_MAIN" --name "${MICROSERVICIO}"
 fi
