@@ -14,6 +14,11 @@ config_git() {
     git pull origin master
 }
 
+config_check_git() {
+    chmod 600 /root/.ssh/id_rsa
+    chmod 644 /root/.ssh/id_rsa.pub
+    ssh-keyscan rsa github.com >> /root/.ssh/known_hosts
+}
 
 echo " [START.SH] Iniciando proceso de arranque..."
 

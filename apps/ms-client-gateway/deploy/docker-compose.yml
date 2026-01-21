@@ -13,8 +13,7 @@ services:
       - "${PORT}:3000" # Conexión: Tu Puerto PC -> Puerto Interno del contenedor
     env_file:
       - .env # Carga las contraseñas y configuración del archivo .env
-    volumes:
-      - ../../../:/app 
+    volumes: 
       - ./logs:/root/logs
       - /home/joselico/.ssh:/root/.ssh
     environment:
