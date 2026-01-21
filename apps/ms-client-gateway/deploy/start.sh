@@ -41,16 +41,28 @@ echo " [PNPM] Instalando dependencias desde la raíz del proyecto..."
 # Ahora pnpm encontrará el package.json y pnpm-workspace.yaml
 pnpm install
 
-# 3. Construcción
-cd apps/${MICROSERVICIO}
-echo " [NEST] Ejecutando build..."
-pnpm run build
+# 3. Instalación
+cd /app/proyecto
+echo " [PNPM] Instalando dependencias..."
+pnpm install
 
-# 4. Lanzamiento
-if [ -d "dist" ]; then
-    export RUTA="dist"
+# 4. Construcción (Desde la raíz para evitar errores de ruta en monorepo)
+echo " [NEST] Ejecutando build de ${MICROSERVICIO}..."
+# Ejecutamos el build desde la raíz especificando el proyecto
+pnpm nest build ${MICROSERVICIO}
+
+# 5. Localización y Ejecución
+echo " [PM2] Buscando archivo de inicio..."
+
+# Buscamos de forma absoluta desde la raíz del proyecto
+ARCHIVO_MAIN=$(find /app/proyecto/dist -name "main.js" | grep "${MICROSERVICIO}" | head -n 1)
+
+if [ -z "$ARCHIVO_MAIN" ]; then
+    echo " ERROR CRÍTICO: No se encontró main.js para ${MICROSERVICIO}"
+    echo " Contenido de la carpeta dist:"
+    ls -R /app/proyecto/dist || echo "Carpeta dist no existe"
+    exit 1
 else
-    export RUTA="../../dist/apps/${MICROSERVICIO}"
+    echo " [OK] Archivo encontrado en: $ARCHIVO_MAIN"
+    pm2-runtime start "$ARCHIVO_MAIN" --name "${MICROSERVICIO}"
 fi
-
-pm2-runtime start ${RUTA}/main.js --name "${MICROSERVICIO}"
