@@ -2,6 +2,19 @@
 # Detener el script si ocurre cualquier error
 set -e
 
+config_git() {
+    git clone --filter=blob:none --no-checkout ${REPO_GIT} backend-mc-pnpm
+    cd backend-mc-pnpm
+
+
+    git sparse-checkout init --cone
+    git sparse-checkout set apps/${MICROSERVICIO} libs
+    git checkout master
+
+    git pull origin master
+}
+
+
 echo " [START.SH] Iniciando proceso de arranque..."
 
 # 1. INSTALACIÓN
