@@ -15,7 +15,7 @@ services:
       - .env # Carga las contraseñas y configuración del archivo .env
     volumes: 
       - ./logs:/root/logs
-      - /root/.ssh:/joselico/.ssh
+      - /root/.ssh:/root/.ssh:ro
     environment:
       # --- Configuración interna ---
       NODE_ENV: production # Modo producción (más rápido/seguro)
