@@ -22,6 +22,8 @@ config_check_git() {
 
 echo " [START.SH] Iniciando proceso de arranque..."
 
+cd /apps
+
 # 1. INSTALACIÓN
 # Usamos --filter para asegurar que instalamos lo de este micro y sus librerías
 echo " [PNPM] Instalando dependencias..."
