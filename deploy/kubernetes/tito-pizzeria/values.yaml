@@ -8,3 +8,7 @@ global:
 
 ms-gateway:
   enabled: true
+
+nats:
+  host: "nats.nats-system.svc.cluster.local"
+  port: 4222

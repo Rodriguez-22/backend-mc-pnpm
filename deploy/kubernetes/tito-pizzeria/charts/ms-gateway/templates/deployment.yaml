@@ -18,16 +18,22 @@ spec:
           image: "jose196/tito-gateway:v1.2"
           resources:
             requests:
-              memory: "512Mi"   # Mínimo que Kubernetes le reserva
+              memory: "512Mi"
               cpu: "250m"
             limits:
-              memory: "1Gi"     # Techo máximo para el build
-              cpu: "1000m"      # 1 núcleo para que compile rápido
+              memory: "1Gi"
+              cpu: "1000m"
           env:
             - name: MICROSERVICIO
-              value: "ms-client-gateway" # Aquí le decimos exactamente qué compilar
+              value: "ms-client-gateway"
             - name: REPO_GIT
               value: "git@github.com:Rodriguez-22/backend-mc-pnpm.git"
+            # --- CONEXIÓN A NATS ---
+            - name: NATS_SERVERS
+              value: "nats://nats.nats-system.svc.cluster.local:4222"
+            # -----------------------
+            - name: PORT
+              value: {{ .Values.app.containerPort | quote }}
           ports:
             - containerPort: {{ .Values.app.containerPort }}
           envFrom:
