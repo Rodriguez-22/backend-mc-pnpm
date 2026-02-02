@@ -6,17 +6,31 @@ config_check_git() {
     echo " [SSH] Preparando llaves..."
     mkdir -p /root/.ssh
     chmod 700 /root/.ssh
-    # Copiamos las llaves mapeadas desde el host si existen
-    cp /root/.ssh_host/* /root/.ssh/ 2>/dev/null || true
-    
-    chmod 600 /root/.ssh/id_rsa
-    chmod 644 /root/.ssh/id_rsa.pub
-    ssh-keyscan github.com >> /root/.ssh/known_hosts
+
+    # Copiamos desde donde montamos el Secret en el deployment.yaml
+    if [ -f /mnt/ssh-keys/id_rsa ]; then
+        cp /mnt/ssh-keys/id_rsa /root/.ssh/id_rsa
+        chmod 600 /root/.ssh/id_rsa
+        echo " [OK] Llave privada configurada."
+    else
+        echo " [ERROR] No se encontro id_rsa en /mnt/ssh-keys"
+        exit 1
+    fi
+
+    # La llave publica es opcional, si no esta, no rompemos el script
+    if [ -f /mnt/ssh-keys/id_rsa.pub ]; then
+        cp /mnt/ssh-keys/id_rsa.pub /root/.ssh/id_rsa.pub
+        chmod 644 /root/.ssh/id_rsa.pub
+    fi
+
+    # Evitamos que pregunte "Are you sure you want to continue connecting?"
+    ssh-keyscan github.com >> /root/.ssh/known_hosts 2>/dev/null
 }
 
 config_git() {
     echo " [GIT] Clonando en /app/proyecto..."
-    # Clonamos directamente en una carpeta específica
+    # Limpiamos carpeta por si acaso
+    rm -rf /app/proyecto
     git clone --filter=blob:none --no-checkout ${REPO_GIT} /app/proyecto
     cd /app/proyecto
 
@@ -27,40 +41,25 @@ config_git() {
     git pull origin master
 }
 
-# --- EJECUCIÓN ---
+# --- EJECUCION ---
 echo " [START.SH] Iniciando proceso de arranque..."
 
-# 1. SSH y GIT primero
 config_check_git
 config_git
 
-# 2. Ahora que el código está en /app/proyecto, entramos para instalar
 cd /app/proyecto
 
-echo " [PNPM] Instalando dependencias desde la raíz del proyecto..."
-# Ahora pnpm encontrará el package.json y pnpm-workspace.yaml
-pnpm install
+echo " [PNPM] Instalando dependencias del monorepo..."
+pnpm install --frozen-lockfile || pnpm install
 
-# 3. Instalación
-cd /app/proyecto
-echo " [PNPM] Instalando dependencias..."
-pnpm install
-
-# 4. Construcción (Desde la raíz para evitar errores de ruta en monorepo)
 echo " [NEST] Ejecutando build de ${MICROSERVICIO}..."
-# Ejecutamos el build desde la raíz especificando el proyecto
 pnpm nest build ${MICROSERVICIO}
 
-# 5. Localización y Ejecución
 echo " [PM2] Buscando archivo de inicio..."
-
-# Buscamos de forma absoluta desde la raíz del proyecto
 ARCHIVO_MAIN=$(find /app/proyecto/dist -name "main.js" | grep "${MICROSERVICIO}" | head -n 1)
 
 if [ -z "$ARCHIVO_MAIN" ]; then
-    echo " ERROR CRÍTICO: No se encontró main.js para ${MICROSERVICIO}"
-    echo " Contenido de la carpeta dist:"
-    ls -R /app/proyecto/dist || echo "Carpeta dist no existe"
+    echo " ERROR CRITICO: No se encontro main.js para ${MICROSERVICIO}"
     exit 1
 else
     echo " [OK] Archivo encontrado en: $ARCHIVO_MAIN"

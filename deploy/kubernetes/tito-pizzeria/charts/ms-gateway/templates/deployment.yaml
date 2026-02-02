@@ -1,0 +1,44 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tito-ms-gateway-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tito-ms-gateway
+  template:
+    metadata:
+      labels:
+        app: tito-ms-gateway
+    spec:
+      containers:
+        - name: tito-ms-gateway
+          image: "jose196/tito-gateway:v1.2"
+          resources:
+            requests:
+              memory: "512Mi"   # Mínimo que Kubernetes le reserva
+              cpu: "250m"
+            limits:
+              memory: "1Gi"     # Techo máximo para el build
+              cpu: "1000m"      # 1 núcleo para que compile rápido
+          env:
+            - name: MICROSERVICIO
+              value: "ms-client-gateway" # Aquí le decimos exactamente qué compilar
+            - name: REPO_GIT
+              value: "git@github.com:Rodriguez-22/backend-mc-pnpm.git"
+          ports:
+            - containerPort: {{ .Values.app.containerPort }}
+          envFrom:
+            - configMapRef:
+                name: tito-ms-gateway-config
+          volumeMounts:
+            - name: ssh-key-volume
+              mountPath: "/mnt/ssh-keys"
+              readOnly: true
+      volumes:
+        - name: ssh-key-volume
+          secret:
+            secretName: tito-ssh-key
+{{- end }}

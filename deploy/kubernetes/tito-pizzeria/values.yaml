@@ -1,0 +1,10 @@
+global:
+  nats:
+    url: "nats://nats:4222"
+  env:
+    REPO_GIT: "git@github.com:Rodriguez-22/backend-mc-pnpm.git"
+    PORT: 3000
+  namespace: "tito-pizzeria"
+
+ms-gateway:
+  enabled: true

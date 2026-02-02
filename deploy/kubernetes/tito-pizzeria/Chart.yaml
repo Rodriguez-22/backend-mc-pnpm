@@ -1,0 +1,9 @@
+apiVersion: v2
+name: tito-pizzeria
+type: application
+version: 0.1.0
+
+dependencies:
+  - name: ms-gateway
+    version: 0.1.0
+    repository: "file://charts/ms-gateway"
