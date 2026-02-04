@@ -1,0 +1,47 @@
+enabled: true  # <--- CRUCIAL: Esto activa que se generen los archivos YAML
+
+app:
+  image:
+    repository: "jose196/tito-gateway"
+    tag: "v1.2"  # Usamos la v1.2 que es la que compila tu monorepo
+    pullPolicy: Always
+  containerPort: 3000   
+  container: 
+    name: tito-ms-usuarios
+    replicas: 1
+
+service:
+  type: ClusterIP # Interno, para que el Gateway lo vea
+  port: 3000
+
+postgres:
+  name: tito-ms-usuarios-postgres
+  image:
+    repository: postgres
+    tag: "15-alpine"
+    pullPolicy: IfNotPresent
+  service:
+    port: 5432
+  auth:
+    database: bdusuarios
+    username: admin
+    password: admin
+  persistence:
+    enabled: true
+    size: 2Gi
+    storageClassName: "hostpath"
+
+env:
+  NODE_ENV: "production"
+  DATABASE_HOST: "tito-ms-usuarios-postgres"
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: "bdusuarios"
+  DATABASE_USER: "admin"
+
+# Esto es lo que inyectamos en el ConfigMap y Deployment
+global:
+  env:
+    REPO_GIT: "git@github.com:Rodriguez-22/backend-mc-pnpm.git"
+    PORT: "3000"
+  nats:
+    url: "nats://nats.nats-system.svc.cluster.local:4222"

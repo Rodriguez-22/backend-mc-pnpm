@@ -1,0 +1,62 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tito-ms-usuarios-deployment
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tito-ms-usuarios
+  template:
+    metadata:
+      labels:
+        app: tito-ms-usuarios
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret-postgres.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: tito-ms-usuarios
+          image: "jose196/tito-gateway:v1.2"
+          imagePullPolicy: {{ .Values.app.image.pullPolicy | default "Always" }}
+          ports:
+            - containerPort: {{ .Values.app.containerPort }}
+          
+          # ASIGNACIÓN DE RECURSOS PARA EVITAR EXIT 137 (OOM)
+          resources:
+            requests:      # <--- Esto debe estar dentro de resources
+              memory: "1Gi"
+              cpu: "500m"
+            limits:        # <--- Esto también
+              memory: "2Gi"
+              cpu: "1000m"
+
+          env:
+            - name: MICROSERVICIO
+              value: "ms-usuarios"
+            - name: REPO_GIT
+              value: "git@github.com:Rodriguez-22/backend-mc-pnpm.git"
+            
+            # Forzamos a Prisma a leer la URL de la base de datos si la usa
+            - name: DATABASE_URL
+              value: "postgresql://{{ .Values.postgres.auth.username }}:$(DATABASE_PASSWORD)@{{ .Values.postgres.name }}:5432/{{ .Values.postgres.auth.database }}?schema=public"
+
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tito-ms-usuarios-postgres-secret
+                  key: POSTGRES_PASSWORD
+          envFrom:
+            - configMapRef:
+                name: tito-ms-usuarios-config
+          volumeMounts:
+            - name: ssh-key-volume
+              mountPath: "/mnt/ssh-keys"
+              readOnly: true
+      volumes:
+        - name: ssh-key-volume
+          secret:
+            secretName: tito-ssh-key
+{{- end }}
