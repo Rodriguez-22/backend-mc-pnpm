@@ -1,26 +1,15 @@
 version: '3'
 
 services:
-  # --- BASE DE DATOS (EXCLUSIVA PARA PRODUCTOS) ---
-  db-products:
-    image: postgres:15 # Usamos la versión 15 de PostgreSQL
-    container_name: postgres-products # Nombre del contenedor de la BD
-    restart: always # Si se cae, intenta levantarse sola
+  ms-productos:
+    build:
+      context: ../../../
+      dockerfile: apps/ms-productos/deploy/Dockerfile
+    container_name: ms-productos
     environment:
-      # Credenciales para entrar a la base de datos
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: db_products # Nombre de la base de datos interna
-    ports:
-      # Tu ordenador (5434) <-> Contenedor (5432).
-      # Usamos el 5434 para que no choque con la BD de usuarios.
-      - "5434:5432"
-    volumes:
-      # Guarda los datos en una carpeta 'data/products' de tu proyecto
-      # para no perderlos si borras el contenedor.
-      - ./data/products:/var/lib/postgresql/data
-    networks:
-      - tito-network # Se conecta a la red compartida
+      - PORT=${PORT}
+      - DATABASE_URL=${DATABASE_URL}
+      - NATS_SERVERS=${NATS_SERVERS}
 
   # --- MICROSERVICIO (TU CÓDIGO) ---
   ms-productos:

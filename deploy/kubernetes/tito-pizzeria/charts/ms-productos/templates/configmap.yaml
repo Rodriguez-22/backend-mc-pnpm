@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tito-ms-productos-config
+data:
+  NATS_SERVERS: "nats://nats.nats-system.svc.cluster.local:4222"
+  PORT: {{ .Values.global.env.PORT | quote }}
+  DATABASE_HOST: {{ .Values.postgres.name | quote }}
+  DATABASE_NAME: {{ .Values.postgres.auth.database | quote }}

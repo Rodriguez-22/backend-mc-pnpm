@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tito-ms-productos-deployment
+spec:
+  replicas: {{ .Values.app.container.replicas }}
+  selector:
+    matchLabels:
+      app: tito-ms-productos
+  template:
+    metadata:
+      labels:
+        app: tito-ms-productos
+    spec:
+      containers:
+        - name: tito-ms-productos
+          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.app.containerPort }}
+          env:
+            - name: MICROSERVICIO
+              value: "ms-productos"
+            - name: DATABASE_URL
+              value: "postgresql://{{ .Values.postgres.auth.username }}:$(DATABASE_PASSWORD)@{{ .Values.postgres.name }}:5432/{{ .Values.postgres.auth.database }}"
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tito-ms-productos-postgres-secret
+                  key: POSTGRES_PASSWORD
+          envFrom:
+            - configMapRef:
+                name: tito-ms-productos-config
