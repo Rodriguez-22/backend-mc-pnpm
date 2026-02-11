@@ -7,11 +7,10 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    # Estos selectores deben coincidir con las etiquetas del Pod de tu base de datos
     app: tito-ms-productos-postgres
   ports:
     - name: tcp-postgres
       protocol: TCP
-      port: {{ .Values.postgres.service.port | default 5432 }}
+      port: 5432
       targetPort: 5432
 {{- end }}

@@ -2,10 +2,10 @@ enabled: true
 
 app:
   image:
-    repository: "jose196/tito-gateway" # Usas la misma imagen que contiene todo el repo
+    repository: "jose196/tito-gateway"
     tag: "v1.2"
     pullPolicy: Always
-  containerPort: 3002
+  containerPort: 3002   
   container: 
     name: tito-ms-productos
     replicas: 1
@@ -19,6 +19,7 @@ postgres:
   image:
     repository: postgres
     tag: "15-alpine"
+    pullPolicy: IfNotPresent
   service:
     port: 5432
   auth:
@@ -29,6 +30,13 @@ postgres:
     enabled: true
     size: 2Gi
     storageClassName: "hostpath"
+
+env:
+  NODE_ENV: "production"
+  DATABASE_HOST: "tito-ms-productos-postgres"
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: "bdproductos"
+  DATABASE_USER: "admin"
 
 global:
   env:

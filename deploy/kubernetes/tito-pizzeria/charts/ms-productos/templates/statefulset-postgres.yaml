@@ -1,7 +1,9 @@
+{{- if .Values.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ .Values.postgres.name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   serviceName: {{ .Values.postgres.name }}
   replicas: 1
@@ -34,6 +36,8 @@ spec:
         name: data
       spec:
         accessModes: ["ReadWriteOnce"]
+        storageClassName: "hostpath"
         resources:
           requests:
             storage: {{ .Values.postgres.persistence.size }}
+{{- end }}
