@@ -1,3 +1,6 @@
 #!/bin/bash
-# Como usas TypeORM con synchronize:true, no necesitamos el comando de migrate de Prisma
+echo "[START.SH] Iniciando Microservicio de Productos..."
+
+# Ir a la carpeta de la app y arrancar
+# (Asegúrate de que la ruta coincida con tu dist)
 node dist/apps/ms-productos/main.js
