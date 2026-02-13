@@ -1,32 +1,34 @@
-controller:
-  image:
-    repository: jenkins/jenkins
-    tag: "2.541.1-lts-jdk21"
-  runAsUser: 1000
-  fsGroup: 1000
-  admin:
-    user: admin
-    password: admin
-  persistence:
-    enabled: true
-    size: 8Gi
-    storageClass: microk8s-hostpath
-  serviceType: ClusterIP
-  sidecars:
-    configAutoReload:
+# Esta llave es obligatoria para que el subchart reciba los valores
+jenkins:
+  controller:
+    image:
+      repository: jenkins/jenkins
+      tag: "2.541.1-lts-jdk21"
+    runAsUser: 1000
+    fsGroup: 1000
+    admin:
+      user: admin
+      password: admin
+    persistence:
       enabled: true
-      image: 
-        repository: kiwigrid/k8s-sidecar
-        tag: "1.27.4"
-  ingress:
-    enabled: true
-    ingressClassName: nginx
-    hostName: jenkins.jrodrodriguez.es
-  additionalPlugins: []
-  installPlugins:
-    - configuration-as-code
-    - kubernetes
-    - workflow-aggregator
-    - credentials
-    - github
-    - git
+      size: 8Gi
+      storageClass: microk8s-hostpath
+    serviceType: ClusterIP
+    sidecars:
+      configAutoReload:
+        enabled: true
+        image: 
+          repository: kiwigrid/k8s-sidecar
+          tag: "1.27.4"
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      hostName: jenkins.jrodrodriguez.es
+    additionalPlugins: []
+    installPlugins:
+      - configuration-as-code
+      - kubernetes
+      - workflow-aggregator
+      - credentials
+      - github
+      - git
