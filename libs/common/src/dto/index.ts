@@ -9,7 +9,7 @@ export * from './ms-productos/alergenos/update-alergeno.dto';
 
 // Usuarios
 export * from './ms-usuarios/create-usuario.dto';
-export * from './ms-usuarios/update-usuario.dto';
+export * from './ms-usuarios/update-usuario.dto';   
 
 // tables
 export * from './ms-tables/create-table.dto';

@@ -1,22 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AuthController } from './app.controller';
+import { AuthService } from './app.service';
 
-describe('AppController', () => {
-  let appController: AppController;
+describe('AuthController', () => {
+  let authController: AuthController;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      controllers: [AppController],
-      providers: [AppService],
+      controllers: [AuthController],
+      providers: [AuthService],
     }).compile();
 
-    appController = app.get<AppController>(AppController);
+    authController = app.get<AuthController>(AuthController);
   });
 
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
-    });
+  // Aquí deberías agregar tests reales para AuthController
+  it('should be defined', () => {
+    expect(authController).toBeDefined();
   });
 });

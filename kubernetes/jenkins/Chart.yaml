@@ -1,0 +1,10 @@
+apiVersion: v2
+name: jenkins
+description: Jenkins CI
+type: application
+version: 0.1.0  # <--- Corregido (antes decía 'verion')
+
+dependencies:   # <--- Corregido (antes decía 'dependency')
+  - name: jenkins
+    version: 5.8.7
+    repository: https://charts.jenkins.io

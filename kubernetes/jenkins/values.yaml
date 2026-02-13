@@ -1,0 +1,15 @@
+controller:
+  runAsUser: 1000
+  fsGroup: 1000
+  admin:
+    user: admin
+    password: admin
+  persistence:
+    enabled: true
+    size: 8Gi
+    storageClass: microk8s-hostpath
+  serviceType: ClusterIP
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hostName: jenkins.jrodrodriguez.es
