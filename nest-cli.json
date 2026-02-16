@@ -61,7 +61,7 @@
       "entryFile": "main",
       "sourceRoot": "apps/ms-auth/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/ms-auth/tsconfig.app.json"
+        "tsConfigPath": "apps/ms-auth/tsconfig.json"
       }
     },
     "ms-qr-codes": {
