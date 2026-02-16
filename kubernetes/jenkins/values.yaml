@@ -45,7 +45,7 @@ controller:
   # Configuración de Sidecars para recarga automática
   sidecars:
     configAutoReload:
-      enabled: true
+      enabled: false
       image:
         repository: kiwigrid/k8s-sidecar
         tag: "1.27.4"
