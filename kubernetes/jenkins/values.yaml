@@ -3,8 +3,7 @@ jenkins:
     create: true
   controller:
     image:
-      repository: jenkins/jenkins
-      tag: "2.541.1-lts-jdk21"
+      tag: "2.541.1"
     runAsUser: 1000
     fsGroup: 1000
     admin:
