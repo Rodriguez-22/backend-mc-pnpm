@@ -18,5 +18,9 @@ export * from './ms-tables/update-table.dto';
 // orders
 export * from './ms-orders/create-order.dto';
 
+// auth
+export * from './ms-auth/auth/LoginUserDto.dto';
+export * from './ms-auth/auth/RegisterUserDto.dto'
+
 // Si necesitas categorías en el futuro, añádelas así:
 // export * from './ms-productos/categorias/create-categoria.dto';
