@@ -1,4 +1,4 @@
-# Values.yaml ajustado según documentación Jenkins Kubernetes.pdf [cite: 85, 382]
+# Values.yaml definitivo para backend-mc-pnpm y Jenkins Kubernetes.pdf
 renderTemplated: true
 
 controller:
@@ -6,35 +6,30 @@ controller:
   image: "jenkins/jenkins"
   tag: "2.541.1-jdk21"
   
-  # Configuración de seguridad basada en el usuario 1000 [cite: 305]
-  # Evita errores de lectura/escritura en el volumen persistente
+  # Seguridad: Coincidir con permisos del host (PDF pág. 38)
   runAsUser: 1000
   fsGroup: 1000
   
-  # Credenciales de Administrador inicial
   adminUser: "admin"
   adminPassword: "admin"
 
-  # Almacenamiento Persistente basado en MicroK8s [cite: 11, 27, 105]
+  # Almacenamiento: Usar el PVC manual creado (PDF pág. 3)
   persistence:
     enabled: true
-    [cite_start]size: "8Gi"  # Capacidad solicitada en el PVC [cite: 105]
-    [cite_start]storageClass: "microk8s-hostpath"  # Clase de almacenamiento para MicroK8s [cite: 27]
+    existingClaim: "jenkins-pvc"
+    storageClass: "microk8s-hostpath"
 
-  # Configuración de Red: Servicio interno ClusterIP [cite: 211, 214]
   serviceType: "ClusterIP"
   
-  # Configuración de Ingress para acceso externo [cite: 151, 155]
   ingress:
     enabled: true
     ingressClassName: "nginx"
     hostName: "jenkins.jrodrodriguez.es"
     annotations:
-      kubernetes.io/ingress.class: "nginx"
-      # Desactivar SSL temporalmente si no hay certificados configurados
+      kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/ssl-redirect: "false"
 
-  # Plugins esenciales para el proyecto backend-mc-pnpm [cite: 382]
+  # Plugins para tu proyecto (PDF pág. 44 y repositorio)
   installPlugins:
     - kubernetes:4025.v42ff33f324e5
     - workflow-aggregator:596.v8c21c963d92d
@@ -44,12 +39,10 @@ controller:
     - configuration-as-code:1775.v810dc350b_ee5
     - dark-theme:635.v7ad9361ccd05
 
-  # Sidecars desactivados para evitar errores de certificados SSL en el arranque
   sidecars:
     configAutoReload:
       enabled: false
 
-# Configuración de la cuenta de servicio (RBAC) necesaria para agentes [cite: 8, 307, 317]
 serviceAccount:
   create: true
-  name: jenkins
+  name: "jenkins"
