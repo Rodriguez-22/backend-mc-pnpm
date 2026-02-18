@@ -1,48 +1,52 @@
-# Values.yaml definitivo para backend-mc-pnpm y Jenkins Kubernetes.pdf
-renderTemplated: true
+# Values.yaml corregido para Jenkins Chart v5.x
+jenkins:
+  controller:
+    componentName: "jenkins-controller"
+    # CAMBIO IMPORTANTE: Estructura nueva de imagen
+    image:
+      tag: "2.541.1"
+    
+    # Política de descarga (suele ir aquí o a nivel de controller, dejémoslo aquí por seguridad)
+    imagePullPolicy: "Always"
 
-controller:
-  componentName: "jenkins-controller"
-  image: "jenkins/jenkins"
-  tag: "2.541.1-jdk21"
-  
-  # Seguridad: Coincidir con permisos del host (PDF pág. 38)
-  runAsUser: 1000
-  fsGroup: 1000
-  
-  adminUser: "admin"
-  adminPassword: "admin"
+    # Seguridad
+    runAsUser: 1000
+    fsGroup: 1000
+    
+    adminUser: "admin"
+    adminPassword: "admin"
 
-  # Almacenamiento: Usar el PVC manual creado (PDF pág. 3)
+    # Red
+    serviceType: "ClusterIP"
+    ingress:
+      enabled: true
+      ingressClassName: "nginx"
+      hostName: "jenkins.jrodrodriguez.es"
+      annotations:
+        kubernetes.io/ingress.class: nginx
+        nginx.ingress.kubernetes.io/ssl-redirect: "false"
+
+    # Plugins
+    installPlugins:
+      - kubernetes:4025.v42ff33f324e5
+      - workflow-aggregator:596.v8c21c963d92d
+      - git:5.2.1
+      - github:1.37.3.1
+      - credentials-binding:644.v95b_6533d9d2f
+      - configuration-as-code:1775.v810dc350b_ee5
+      - dark-theme:635.v7ad9361ccd05
+
+    sidecars:
+      configAutoReload:
+        enabled: false
+
+  # Almacenamiento
   persistence:
     enabled: true
     existingClaim: "jenkins-pvc"
     storageClass: "microk8s-hostpath"
 
-  serviceType: "ClusterIP"
-  
-  ingress:
-    enabled: true
-    ingressClassName: "nginx"
-    hostName: "jenkins.jrodrodriguez.es"
-    annotations:
-      kubernetes.io/ingress.class: nginx
-      nginx.ingress.kubernetes.io/ssl-redirect: "false"
-
-  # Plugins para tu proyecto (PDF pág. 44 y repositorio)
-  installPlugins:
-    - kubernetes:4025.v42ff33f324e5
-    - workflow-aggregator:596.v8c21c963d92d
-    - git:5.2.1
-    - github:1.37.3.1
-    - credentials-binding:644.v95b_6533d9d2f
-    - configuration-as-code:1775.v810dc350b_ee5
-    - dark-theme:635.v7ad9361ccd05
-
-  sidecars:
-    configAutoReload:
-      enabled: false
-
-serviceAccount:
-  create: true
-  name: "jenkins"
+  # Service Account
+  serviceAccount:
+    create: true
+    name: "jenkins"
