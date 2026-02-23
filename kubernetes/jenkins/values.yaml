@@ -28,13 +28,13 @@ jenkins:
 
     # Plugins
     installPlugins:
-      - kubernetes:4025.v42ff33f324e5
-      - workflow-aggregator:596.v8c21c963d92d
-      - git:5.2.1
-      - github:1.37.3.1
-      - credentials-binding:644.v95b_6533d9d2f
-      - configuration-as-code:1775.v810dc350b_ee5
-      - dark-theme:635.v7ad9361ccd05
+      - kubernetes
+      - workflow-aggregator
+      - git
+      - github
+      - credentials-binding
+      - configuration-as-code
+      - dark-theme
 
     sidecars:
       configAutoReload:
