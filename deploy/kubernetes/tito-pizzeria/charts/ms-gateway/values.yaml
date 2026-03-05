@@ -1,13 +1,14 @@
 app:
   image:
     repository: "jose196/tito-gateway"
-    tag: "v1.2"  # <-- ¡Asegúrate de que coincida con lo que subiste!
+    tag: "v1.2"  # (o "latest" si la subiste así)
     pullPolicy: "Always"
   containerPort: 3000
-  # Añade esto para que el Gateway sepa dónde está NATS
   env:
     NATS_SERVERS: "nats://nats:4222"
     PORT: "3000"
+    # 👇 ESTA ES LA LÍNEA QUE SALVARÁ AL GATEWAY 👇
+    REPO_GIT: "https://github.com/Rodriguez-22/backend-mc-pnpm.git"
 
 service:
   type: NodePort
@@ -19,4 +20,4 @@ ingress:
   className: nginx
   host: api.jrodrodriguez.es
   path: /
-  pathType: ImplementationSpecific # O Prefix, pero asegúrate de tener el controller de Ingress instalado
+  pathType: ImplementationSpecific

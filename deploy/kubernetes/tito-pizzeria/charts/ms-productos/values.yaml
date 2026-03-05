@@ -33,6 +33,7 @@ postgres:
 # 👇 AQUÍ ESTÁ LA MAGIA QUE FALTABA 👇
 env:
   NODE_ENV: "production"
+  # Las que ya tenías:
   DATABASE_HOST: "tito-ms-productos-postgres"
   DATABASE_PORT: "5432"
   DATABASE_NAME: "bdproductos"
@@ -40,8 +41,10 @@ env:
   DATABASE_PASSWORD: "admin_productos_pass"
   DATABASE_URL: "postgresql://admin:admin_productos_pass@tito-ms-productos-postgres:5432/bdproductos?schema=public"
   NATS_SERVERS: "nats://nats:4222"
-
-global:
-  env:
-    PORT: "3002"
-    REPO_GIT: "https://github.com/Rodriguez-22/backend-mc-pnpm.git"
+  
+  # 👇 ¡ESTAS SON LAS QUE FALTABAN PARA QUE NESTJS NO CHOQUE! 👇
+  DB_NAME: "bdproductos"
+  DB_HOST: "tito-ms-productos-postgres"
+  DB_PORT: "5432"
+  DB_USER: "admin"
+  DB_PASSWORD: "admin_productos_pass"
