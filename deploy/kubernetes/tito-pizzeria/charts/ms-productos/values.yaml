@@ -47,4 +47,7 @@ env:
   DB_HOST: "tito-ms-productos-postgres"
   DB_PORT: "5432"
   DB_USER: "admin"
+  DB_USERNAME: "admin" # <-- ¡AÑADE ESTA PARA QUE NEST NO SE QUEJE!
   DB_PASSWORD: "admin_productos_pass"
+  DATABASE_URL: "postgresql://admin:admin_productos_pass@tito-ms-productos-postgres:5432/bdproductos?schema=public"
+  NATS_SERVERS: "nats://nats:4222"
