@@ -1,5 +1,5 @@
 apiVersion: v2
-name: tito-ms-usuarios
+name: ms-usuarios
 description: Helm chart para el microservicio de usuarios de Tito Pizzería
 type: application
 version: 0.1.0
