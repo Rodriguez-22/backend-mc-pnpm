@@ -43,8 +43,4 @@ spec:
             - name: ssh-key-volume
               mountPath: "/mnt/ssh-keys"
               readOnly: true
-      volumes:
-        - name: ssh-key-volume
-          secret:
-            secretName: tito-ssh-key
 {{- end }}
