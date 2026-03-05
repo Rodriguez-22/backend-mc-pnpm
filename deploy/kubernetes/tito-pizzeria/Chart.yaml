@@ -5,14 +5,10 @@ version: 0.1.0
 
 dependencies:
   - name: ms-gateway
-    version: 0.1.0
-    repository: "file://charts/ms-gateway"
+    version: 0.1.0    # <-- Asegúrate que coincida con su propio Chart.yaml
   - name: ms-productos
-    version: 0.1.0
-    repository: "file://charts/ms-productos"
+    version: 0.1.0    # <-- ¡Pon aquí la versión exacta que tenga su Chart.yaml!
   - name: ms-usuarios
-    version: 0.1.0
-    repository: "file://charts/ms-usuarios"
+    version: 0.1.0    # <-- ¡Pon aquí la versión exacta que tenga su Chart.yaml!
   - name: infra-nats
     version: 0.1.0
-    repository: "file://charts/infra-nats"
