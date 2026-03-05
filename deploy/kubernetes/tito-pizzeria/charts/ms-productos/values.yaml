@@ -28,19 +28,20 @@ postgres:
   persistence:
     enabled: true
     size: 2Gi
-    storageClassName: "microk8s-hostpath" # <-- ¡Asegurado el nombre correcto!
+    storageClassName: "microk8s-hostpath"
 
+# 👇 AQUÍ ESTÁ LA MAGIA QUE FALTABA 👇
 env:
   NODE_ENV: "production"
   DATABASE_HOST: "tito-ms-productos-postgres"
   DATABASE_PORT: "5432"
   DATABASE_NAME: "bdproductos"
   DATABASE_USER: "admin"
-  # ¡IMPORTANTE! Añadimos la conexión a NATS que faltaba:
-  NATS_SERVERS: "nats://nats:4222" 
+  DATABASE_PASSWORD: "admin_productos_pass"
+  DATABASE_URL: "postgresql://admin:admin_productos_pass@tito-ms-productos-postgres:5432/bdproductos?schema=public"
+  NATS_SERVERS: "nats://nats:4222"
 
 global:
   env:
     PORT: "3002"
-    # Cambiado a HTTPS para evitar fallos de permisos SSH (Secret tito-ssh-key)
     REPO_GIT: "https://github.com/Rodriguez-22/backend-mc-pnpm.git"
