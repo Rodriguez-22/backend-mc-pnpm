@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    triggers {
+        githubPush()
+    }
+
     tools {
         // Asegúrate de que este nombre coincida con el que pusiste en 'Global Tool Configuration'
         nodejs 'node20' 
