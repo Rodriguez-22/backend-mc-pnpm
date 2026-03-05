@@ -2,40 +2,42 @@ pipeline {
     agent any
     
     environment {
-        DOCKER_HUB_USER = 'jose196' // Cambia por el tuyo si es necesario
-        GIT_REPO_URL = 'https://github.com/rodriguez-22/backend-mc-pnpm.git'
+        DOCKER_REGISTRY = 'jose196' // Tu usuario de Docker Hub
+        GIT_REPO = 'https://github.com/rodriguez-22/backend-mc-pnpm.git'
     }
 
     stages {
-        stage('Install Dependencies') {
-            steps {
-                sh 'pnpm install'
-            }
-        }
-
         stage('Build & Push ms-auth') {
             steps {
                 script {
-                    // Construimos la imagen usando el Dockerfile corregido
-                    sh "docker build -t ${DOCKER_HUB_USER}/tito-auth:latest -f apps/ms-auth/deploy/Dockerfile ."
-                    // Subimos la imagen (requiere haber hecho docker login previamente en el server)
-                    sh "docker push ${DOCKER_HUB_USER}/tito-auth:latest"
+                    // Construcción con Webpack (como vimos que funcionaba)
+                    sh 'pnpm install'
+                    sh 'nest build ms-auth'
+                    sh "docker build -t ${DOCKER_REGISTRY}/ms-auth:latest -f apps/ms-auth/deploy/Dockerfile ."
+                    sh "docker push ${DOCKER_REGISTRY}/ms-auth:latest"
                 }
             }
         }
 
-        stage('Update Git Manifests') {
+        stage('Build & Push ms-usuarios') {
             steps {
                 script {
-                    // Aquí es donde GitOps ocurre: Jenkins actualiza el tag en el values.yaml
-                    // Para simplificar, usaremos sed para cambiar el tag en el archivo de Helm
-                    sh "sed -i 's/tag: .*/tag: \"latest\"/' deploy/kubernetes/tito-pizzeria/charts/ms-auth/values.yaml"
+                    sh "docker build -t ${DOCKER_REGISTRY}/ms-usuarios:latest -f apps/ms-usuarios/deploy/Dockerfile ."
+                    sh "docker push ${DOCKER_REGISTRY}/ms-usuarios:latest"
+                }
+            }
+        }
+
+        stage('GitOps Update') {
+            steps {
+                script {
+                    // Actualizamos el tag en el archivo de Helm para que Argo CD lo detecte
+                    sh "sed -i 's/tag: .*/tag: \"latest\"/' deploy/kubernetes/tito-pizzeria/values.yaml"
                     
-                    // Commiteamos el cambio al repo para que Argo CD lo vea
-                    withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                    withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                         sh 'git add .'
-                        sh 'git commit -m "chore: update ms-auth image tag [skip ci]"'
-                        sh "git push https://${GIT_PASS}@github.com/rodriguez-22/backend-mc-pnpm.git HEAD:main"
+                        sh 'git commit -m "chore: update image tags [skip ci]"'
+                        sh "git push https://${PASS}@github.com/rodriguez-22/backend-mc-pnpm.git HEAD:main"
                     }
                 }
             }
