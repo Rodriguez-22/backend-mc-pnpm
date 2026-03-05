@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tito-ms-gateway-deployment
+  namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
@@ -15,7 +16,9 @@ spec:
     spec:
       containers:
         - name: tito-ms-gateway
-          image: "jose196/tito-gateway:v1.2"
+          # 👇 Usamos latest para que siempre pille lo que acaba de subir Jenkins
+          image: "jose196/tito-gateway:latest" 
+          imagePullPolicy: Always
           resources:
             requests:
               memory: "512Mi"
@@ -26,12 +29,9 @@ spec:
           env:
             - name: MICROSERVICIO
               value: "ms-client-gateway"
-            - name: REPO_GIT
-              value: "git@github.com:Rodriguez-22/backend-mc-pnpm.git"
-            # --- CONEXIÓN A NATS ---
+            # 👇 CORREGIDO: Apuntando al namespace tito-pizzeria donde está tu NATS
             - name: NATS_SERVERS
-              value: "nats://nats.nats-system.svc.cluster.local:4222"
-            # -----------------------
+              value: "nats://nats.tito-pizzeria.svc.cluster.local:4222"
             - name: PORT
               value: {{ .Values.app.containerPort | quote }}
           ports:
