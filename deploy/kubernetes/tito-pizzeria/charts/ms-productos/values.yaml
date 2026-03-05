@@ -24,31 +24,26 @@ postgres:
   auth:
     database: bdproductos
     username: admin
-    password: admin
+    password: admin_productos_pass
   persistence:
     enabled: true
     size: 2Gi
     storageClassName: "microk8s-hostpath"
 
-# 
-
 env:
-  # Entorno y Mensajería
   NODE_ENV: "production"
   NATS_SERVERS: "nats://nats:4222"
   
-  # Variables de conexión principal (Prisma / TypeORM)
   DATABASE_HOST: "tito-ms-productos-postgres"
   DATABASE_PORT: "5432"
   DATABASE_NAME: "bdproductos"
   DATABASE_USER: "admin"
-  DATABASE_PASSWORD: "admin"
-  DATABASE_URL: "postgresql://admin:admin@tito-ms-productos-postgres:5432/bdproductos?schema=public"
+  DATABASE_PASSWORD: "admin_productos_pass"
+  DATABASE_URL: "postgresql://admin:admin_productos_pass@tito-ms-productos-postgres:5432/bdproductos?schema=public"
   
-  # Variables requeridas por la validación de NestJS (Prefijo DB_)
   DB_HOST: "tito-ms-productos-postgres"
   DB_PORT: "5432"
   DB_NAME: "bdproductos"
   DB_USER: "admin"
   DB_USERNAME: "admin"
-  DB_PASSWORD: "admin"
+  DB_PASSWORD: "admin_productos_pass"
