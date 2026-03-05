@@ -1,17 +1,17 @@
-enabled: true  # <--- CRUCIAL: Esto activa que se generen los archivos YAML
+enabled: true
 
 app:
   image:
-    repository: "jose196/tito-gateway"
-    tag: "v1.2"  # Usamos la v1.2 que es la que compila tu monorepo
+    repository: "jose196/tito-ms-usuarios"   # ← imagen propia del servicio
+    tag: "latest"                              # Jenkins sobreescribirá este valor
     pullPolicy: Always
-  containerPort: 3000   
-  container: 
+  containerPort: 3000
+  container:
     name: tito-ms-usuarios
     replicas: 1
 
 service:
-  type: ClusterIP # Interno, para que el Gateway lo vea
+  type: ClusterIP
   port: 3000
 
 postgres:
@@ -38,7 +38,6 @@ env:
   DATABASE_NAME: "bdusuarios"
   DATABASE_USER: "admin"
 
-# Esto es lo que inyectamos en el ConfigMap y Deployment
 global:
   env:
     REPO_GIT: "git@github.com:Rodriguez-22/backend-mc-pnpm.git"

@@ -2,11 +2,11 @@ enabled: true
 
 app:
   image:
-    repository: "jose196/tito-gateway"
-    tag: "v1.2"
+    repository: "jose196/tito-ms-productos"   # ← imagen propia del servicio
+    tag: "latest"                               # Jenkins sobreescribirá este valor
     pullPolicy: Always
-  containerPort: 3002   
-  container: 
+  containerPort: 3002
+  container:
     name: tito-ms-productos
     replicas: 1
 
