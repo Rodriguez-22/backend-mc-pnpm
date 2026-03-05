@@ -7,3 +7,12 @@ dependencies:
   - name: ms-gateway
     version: 0.1.0
     repository: "file://charts/ms-gateway"
+  - name: ms-productos
+    version: 0.1.0
+    repository: "file://charts/ms-productos"
+  - name: ms-usuarios
+    version: 0.1.0
+    repository: "file://charts/ms-usuarios"
+  - name: infra-nats
+    version: 0.1.0
+    repository: "file://charts/infra-nats"
