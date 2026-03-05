@@ -2,7 +2,7 @@ global:
   nats:
     url: "nats://nats:4222"
   env:
-    REPO_GIT: "git@github.com:Rodriguez-22/backend-mc-pnpm.git"
+    REPO_GIT: "https://github.com/Rodriguez-22/backend-mc-pnpm.git"
     PORT: 3000
   namespace: "tito-pizzeria"
 
