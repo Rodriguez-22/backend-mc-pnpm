@@ -40,8 +40,4 @@ spec:
           envFrom:
             - configMapRef:
                 name: tito-ms-usuarios-config
-          volumeMounts:
-            - name: ssh-key-volume
-              mountPath: "/mnt/ssh-keys"
-              readOnly: true
 {{- end }}
