@@ -19,7 +19,6 @@ spec:
     spec:
       containers:
         - name: tito-ms-usuarios
-          # ✅ Ahora usa la imagen del values.yaml, no hardcodeada
           image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
           imagePullPolicy: {{ .Values.app.image.pullPolicy | default "Always" }}
           ports:
@@ -34,13 +33,10 @@ spec:
           env:
             - name: MICROSERVICIO
               value: "ms-usuarios"
+            # Mantenemos DATABASE_URL porque usa la interpolación del password que viene del ConfigMap
             - name: DATABASE_URL
               value: "postgresql://{{ .Values.postgres.auth.username }}:$(DATABASE_PASSWORD)@{{ .Values.postgres.name }}:5432/{{ .Values.postgres.auth.database }}?schema=public"
-            - name: DATABASE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: tito-ms-usuarios-postgres-secret
-                  key: POSTGRES_PASSWORD
+            # 👇 BLOQUE ELIMINADO PARA EVITAR EL ERROR DE ARGO CD 👇
           envFrom:
             - configMapRef:
                 name: tito-ms-usuarios-config
