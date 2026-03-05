@@ -30,19 +30,19 @@ pipeline {
         stage('Construir Imágenes Docker') {
             steps {
                 script {
-                    echo 'Construyendo imágenes desde la raíz del monorepo...'
+                    echo 'Construyendo imágenes con argumentos de microservicio...'
                     
                     // 1. Client Gateway
-                    sh "docker build -t ${DOCKER_USER}/tito-gateway:latest -f apps/ms-client-gateway/deploy/Dockerfile ."
+                    sh "docker build -t ${DOCKER_USER}/tito-gateway:latest --build-arg MICROSERVICIO=ms-client-gateway -f apps/ms-client-gateway/deploy/Dockerfile ."
                     
                     // 2. Microservicio de Usuarios
-                    sh "docker build -t ${DOCKER_USER}/tito-ms-usuarios:latest -f apps/ms-usuarios/deploy/Dockerfile ."
+                    sh "docker build -t ${DOCKER_USER}/tito-ms-usuarios:latest --build-arg MICROSERVICIO=ms-usuarios -f apps/ms-usuarios/deploy/Dockerfile ."
                     
                     // 3. Microservicio de Productos
-                    sh "docker build -t ${DOCKER_USER}/tito-ms-productos:latest -f apps/ms-productos/deploy/Dockerfile ."
+                    sh "docker build -t ${DOCKER_USER}/tito-ms-productos:latest --build-arg MICROSERVICIO=ms-productos -f apps/ms-productos/deploy/Dockerfile ."
 
                     // 4. Microservicio de Auth
-                    sh "docker build -t ${DOCKER_USER}/tito-ms-auth:latest -f apps/ms-auth/deploy/Dockerfile ."
+                    sh "docker build -t ${DOCKER_USER}/tito-ms-auth:latest --build-arg MICROSERVICIO=ms-auth -f apps/ms-auth/deploy/Dockerfile ."
                 }
             }
         }
