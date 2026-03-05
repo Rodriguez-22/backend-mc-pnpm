@@ -1,20 +1,22 @@
 app:
   image:
     repository: "jose196/tito-gateway"
-    tag: "v1.0"
+    tag: "v1.2"  # <-- ¡Asegúrate de que coincida con lo que subiste!
     pullPolicy: "Always"
   containerPort: 3000
-
+  # Añade esto para que el Gateway sepa dónde está NATS
+  env:
+    NATS_SERVERS: "nats://nats:4222"
+    PORT: "3000"
 
 service:
   type: NodePort
   port: 3000
   nodePort: 30080
 
-
 ingress:
   enabled: true
   className: nginx
   host: api.jrodrodriguez.es
   path: /
-  pathType: Prefix
+  pathType: ImplementationSpecific # O Prefix, pero asegúrate de tener el controller de Ingress instalado

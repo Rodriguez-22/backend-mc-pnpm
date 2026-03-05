@@ -2,8 +2,8 @@ enabled: true
 
 app:
   image:
-    repository: "jose196/tito-ms-usuarios"   # ← imagen propia del servicio
-    tag: "latest"                              # Jenkins sobreescribirá este valor
+    repository: "jose196/tito-ms-usuarios"
+    tag: "latest"
     pullPolicy: Always
   containerPort: 3000
   container:
@@ -37,10 +37,14 @@ env:
   DATABASE_PORT: "5432"
   DATABASE_NAME: "bdusuarios"
   DATABASE_USER: "admin"
+  # Agregamos NATS aquí también para asegurar la conexión del microservicio
+  NATS_SERVERS: "nats://nats:4222"
 
 global:
   env:
-    REPO_GIT: "git@github.com:Rodriguez-22/backend-mc-pnpm.git"
+    # Cambiado a HTTPS para evitar líos de llaves SSH
+    REPO_GIT: "https://github.com/Rodriguez-22/backend-mc-pnpm.git"
     PORT: "3000"
   nats:
-    url: "nats://nats.nats-system.svc.cluster.local:4222"
+    # URL corregida apuntando al servicio local 'nats' en tu namespace
+    url: "nats://nats:4222"

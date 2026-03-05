@@ -2,8 +2,8 @@ enabled: true
 
 app:
   image:
-    repository: "jose196/tito-ms-productos"   # ← imagen propia del servicio
-    tag: "latest"                               # Jenkins sobreescribirá este valor
+    repository: "jose196/tito-ms-productos"
+    tag: "latest"
     pullPolicy: Always
   containerPort: 3002
   container:
@@ -19,7 +19,6 @@ postgres:
   image:
     repository: postgres
     tag: "15-alpine"
-    pullPolicy: IfNotPresent
   service:
     port: 5432
   auth:
@@ -29,7 +28,7 @@ postgres:
   persistence:
     enabled: true
     size: 2Gi
-    storageClassName: "microk8s-hostpath"
+    storageClassName: "microk8s-hostpath" # <-- ¡Asegurado el nombre correcto!
 
 env:
   NODE_ENV: "production"
@@ -37,8 +36,11 @@ env:
   DATABASE_PORT: "5432"
   DATABASE_NAME: "bdproductos"
   DATABASE_USER: "admin"
+  # ¡IMPORTANTE! Añadimos la conexión a NATS que faltaba:
+  NATS_SERVERS: "nats://nats:4222" 
 
 global:
   env:
     PORT: "3002"
-    REPO_GIT: "git@github.com:Rodriguez-22/backend-mc-pnpm.git"
+    # Cambiado a HTTPS para evitar fallos de permisos SSH (Secret tito-ssh-key)
+    REPO_GIT: "https://github.com/Rodriguez-22/backend-mc-pnpm.git"
