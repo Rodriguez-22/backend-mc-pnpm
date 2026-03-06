@@ -29,7 +29,8 @@ spec:
             - name: MICROSERVICIO
               value: "ms-usuarios"
             - name: DATABASE_URL
-              value: "postgresql://admin:$(DATABASE_PASSWORD)@{{ include "ms-usuarios.fullname" . }}-postgres:5432/bdusuarios?schema=public"
+              # 👇 CAMBIO AQUÍ: Ponemos el nombre fijo del servicio de postgres
+              value: "postgresql://admin:admin@tito-ms-usuarios-postgres:5432/bdusuarios?schema=public"
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
