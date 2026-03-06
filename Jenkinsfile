@@ -1,57 +1,75 @@
 pipeline {
     agent any
-    
+
+    triggers {
+        githubPush()
+    }
+
+    tools {
+        // Asegúrate de que este nombre coincida con el que pusiste en 'Global Tool Configuration'
+        nodejs 'node20' 
+    }
+
     environment {
-        // Tu usuario de Docker Hub para subir las imágenes
-        DOCKER_REGISTRY = 'jose196' 
+        DOCKER_USER = 'jose196'
+        // Jenkins inyecta automáticamente DOCKER_HUB_AUTH_USR y DOCKER_HUB_AUTH_PSW
+        DOCKER_HUB_AUTH = credentials('docker-hub-credentials')
     }
 
     stages {
         stage('Preparación') {
             steps {
-                // Instalamos las dependencias necesarias
+                echo 'Limpiando entorno y descargando código...'
+                checkout scm
+            }
+        }
+
+        stage('Instalación pnpm') {
+            steps {
+                echo 'Instalando dependencias del monorepo...'
                 sh 'pnpm install'
             }
         }
 
-        stage('Build & Push MS-Usuarios') {
+        stage('Construir Imágenes Docker') {
             steps {
                 script {
-                    // Compilamos usando Nest para generar el dist empaquetado
-                    sh 'pnpm nest build ms-usuarios'
-                    // Construimos la imagen de Docker
-                    sh "docker build -t ${DOCKER_REGISTRY}/ms-usuarios:latest -f apps/ms-usuarios/deploy/Dockerfile ."
-                    // Subimos la imagen a Docker Hub
-                    sh "docker push ${DOCKER_REGISTRY}/ms-usuarios:latest"
-                }
-            }
-        }
-
-        stage('Build & Push MS-Gateway') {
-            steps {
-                script {
-                    // Repetimos el proceso para el Gateway
-                    sh 'pnpm nest build ms-client-gateway'
-                    sh "docker build -t ${DOCKER_REGISTRY}/ms-gateway:latest -f apps/ms-client-gateway/deploy/Dockerfile ."
-                    sh "docker push ${DOCKER_REGISTRY}/ms-gateway:latest"
-                }
-            }
-        }
-
-        stage('Sincronización GitOps (Argo CD)') {
-            steps {
-                script {
-                    // Actualizamos un archivo para que Argo CD detecte un cambio en el repositorio
-                    sh "date > last_deploy.txt"
+                    echo 'Construyendo imágenes con argumentos de microservicio...'
                     
-                    // Necesitas configurar una credencial en Jenkins con ID 'github-token'
-                    withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                        sh 'git add .'
-                        sh 'git commit -m "chore: deploy selectivo gateway y usuarios [skip ci]"'
-                        sh "git push https://${PASS}@github.com/rodriguez-22/backend-mc-pnpm.git HEAD:main"
-                    }
+                    // 1. Client Gateway
+                    sh "docker build -t ${DOCKER_USER}/tito-gateway:latest --build-arg MICROSERVICIO=ms-client-gateway -f apps/ms-client-gateway/deploy/Dockerfile ."
+                    
+                    // 2. Microservicio de Usuarios
+                    sh "docker build -t ${DOCKER_USER}/tito-ms-usuarios:latest --build-arg MICROSERVICIO=ms-usuarios -f apps/ms-usuarios/deploy/Dockerfile ."
+                    
+                    // 3. Microservicio de Productos
+                    sh "docker build -t ${DOCKER_USER}/tito-ms-productos:latest --build-arg MICROSERVICIO=ms-productos -f apps/ms-productos/deploy/Dockerfile ."
+
+                    // 4. Microservicio de Auth
+                    sh "docker build -t ${DOCKER_USER}/tito-ms-auth:latest --build-arg MICROSERVICIO=ms-auth -f apps/ms-auth/deploy/Dockerfile ."
                 }
             }
+        }
+
+        stage('Subir a Docker Hub') {
+            steps {
+                echo 'Iniciando sesión en Docker Hub y subiendo imágenes...'
+                sh "echo $DOCKER_HUB_AUTH_PSW | docker login -u $DOCKER_HUB_AUTH_USR --password-stdin"
+                
+                sh "docker push ${DOCKER_USER}/tito-gateway:latest"
+                sh "docker push ${DOCKER_USER}/tito-ms-usuarios:latest"
+                sh "docker push ${DOCKER_USER}/tito-ms-productos:latest"
+                sh "docker push ${DOCKER_USER}/tito-ms-auth:latest"
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo '¡Pipeline finalizado con éxito! Imágenes disponibles en Docker Hub.'
+        }
+        failure {
+            echo 'Algo ha fallado en el proceso. Revisa los logs de arriba.'
         }
     }
 }
