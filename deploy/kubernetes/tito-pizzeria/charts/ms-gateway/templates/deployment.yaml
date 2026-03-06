@@ -15,19 +15,21 @@ spec:
         app: tito-ms-gateway
     spec:
       containers:
-        - name: {{ include "ms-gateway.fullname" . }}
+        # 👇 AQUÍ: Cambiamos el include por el nombre estático
+        - name: tito-ms-gateway
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           env:
-            # ... otras variables que ya tengas ...
             - name: PORT
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "ms-gateway.fullname" . }}-config
+                  # 👇 AQUÍ: Cambiamos el include
+                  name: tito-ms-gateway-config
                   key: PORT
             - name: NATS_SERVERS
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "ms-gateway.fullname" . }}-config
+                  # 👇 AQUÍ: Cambiamos el include
+                  name: tito-ms-gateway-config
                   key: NATS_SERVERS
             - name: JWT_SECRET
               valueFrom:
