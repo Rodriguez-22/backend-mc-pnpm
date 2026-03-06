@@ -9,7 +9,7 @@ async function bootstrap() {
   // 👇 ESTA ES LA PIEZA QUE FALTA 👇
   app.enableCors({
     // Permitimos específicamente tu frontend local
-    origin: ['http://localhost:3001', 'http://localhost:3000'], 
+    origin: 'http://95.111.225.241:32033', 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
