@@ -1,18 +1,13 @@
 generator client {
-  provider = "prisma-client-js"
-  // Generamos el cliente en la raíz del monorepo, fuera de tu código fuente
-  output   = "../../../node_modules/.prisma/client"
+  provider        = "prisma-client-js"
+  output          = "../../../node_modules/.prisma/client"
   previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  // ¡En Prisma 7 la URL NO va aquí! Prisma la lee automáticamente de prisma.config.ts
 }
-
-// apps/ms-usuarios/prisma/schema.prisma
-
-// ... (configuración generator y datasource igual)
 
 model User {
   id        String   @id @default(uuid())
@@ -23,7 +18,6 @@ model User {
   password  String
   isActive  Boolean  @default(true)
 
-  // ✅ CORRECCIÓN: Añadimos @relation("UserRoles") para que coincida con Role
   roles     Role[]   @relation("UserRoles") 
 
   createdAt DateTime @default(now())
@@ -38,9 +32,7 @@ model Role {
   slug      String    @unique
   isActive  Boolean   @default(true)
 
-  // Esta línea ya estaba bien, pero necesitaba su pareja en User
   users     User[]    @relation("UserRoles") 
-  
   permisos  Permiso[] @relation("RolePermisos")
 
   createdAt DateTime  @default(now())
@@ -57,7 +49,6 @@ model Permiso {
   resource  String   
   isActive  Boolean  @default(true)
 
-  // Asegúrate de que esta también coincida con Role (RolePermisos)
   roles     Role[]   @relation("RolePermisos")
 
   createdAt DateTime @default(now())
