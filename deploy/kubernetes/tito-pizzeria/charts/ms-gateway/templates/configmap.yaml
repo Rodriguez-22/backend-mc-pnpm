@@ -5,12 +5,12 @@ metadata:
   name: tito-ms-gateway-config
   namespace: {{ .Release.Namespace | quote }}
 data:
-  NATS_SERVERS: {{ .Values.global.nats.url | quote }}
+  NATS_SERVERS: "nats://infra-nats:4222"
   REPO_GIT: {{ .Values.global.env.REPO_GIT | quote }}
-  PORT: {{ .Values.global.env.PORT | quote }}
+  PORT: "3000"
   MS_USERS_HOST: "tito-ms-users-service"
   MS_USERS_PORT: "3000"
   MS_PRODUCTS_HOST: "tito-ms-products-service"
   MS_PRODUCTS_PORT: "3000"
-  JWT_SECRET: "mi_clave_secreta_super_segura_123"
+  JWT_SECRET: JWT_SECRET
 {{- end }}
