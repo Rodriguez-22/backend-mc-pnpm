@@ -31,15 +31,21 @@ spec:
               memory: "1Gi"
               cpu: "1000m"
           env:
-            - name: MICROSERVICIO
-              value: "ms-usuarios"
-            - name: DATABASE_URL
-              value: "postgresql://{{ .Values.postgres.auth.username }}:$(DATABASE_PASSWORD)@{{ .Values.postgres.name }}:5432/{{ .Values.postgres.auth.database }}?schema=public"
-            - name: JWT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: jwt-token-secret
-                  key: JWT_SECRET
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "ms-usuarios.fullname" . }}-config
+              key: PORT
+        - name: NATS_SERVERS
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "ms-usuarios.fullname" . }}-config
+              key: NATS_SERVERS
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: jwt-token-secret
+              key: JWT_SECRET
           envFrom:
             - configMapRef:
                 name: tito-ms-usuarios-config

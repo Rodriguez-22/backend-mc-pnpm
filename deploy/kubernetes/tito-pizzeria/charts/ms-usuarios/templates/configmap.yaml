@@ -6,11 +6,11 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   # Apuntamos al NATS que desplegamos en nats-system
-  NATS_SERVERS: "nats://nats.nats-system.svc.cluster.local:4222"
+  NATS_SERVERS: "{{ .Values.global.natsServers }}"
   
   # Variables de entorno para el proceso de compilación y ejecución
-  REPO_GIT: {{ .Values.global.env.REPO_GIT | quote }}
-  PORT: {{ .Values.global.env.PORT | quote }}
+  REPO_GIT: "{{ .Values.global.env.REPO_GIT }}"
+  PORT: "{{ .Values.service.port }}"
   
   # Configuración de Base de Datos
   DATABASE_HOST: {{ .Values.env.DATABASE_HOST | quote }}
