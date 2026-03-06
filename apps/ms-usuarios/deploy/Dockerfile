@@ -17,11 +17,11 @@ COPY . .
 # 4. Instalamos las dependencias
 RUN pnpm install
 
-# 5. Compilamos el código de NestJS
-RUN pnpm run build ${MICROSERVICIO}
+# 5. 🛑 FIX: Generamos el cliente de Prisma ANTES de compilar
+RUN npx prisma generate --schema=apps/ms-usuarios/prisma/schema.prisma
 
-# 6. Generamos el cliente de Prisma (Opcional, pero muy recomendado para ms-usuarios)
-RUN npx prisma generate --schema=apps/ms-usuarios/prisma/schema.prisma || true
+# 6. 🟢 AHORA SÍ: Compilamos el código de NestJS
+RUN pnpm run build ${MICROSERVICIO}
 
 # 7. Movemos y preparamos el script de arranque
 RUN cp apps/${MICROSERVICIO}/deploy/start.sh /usr/local/bin/start-app.sh && \
