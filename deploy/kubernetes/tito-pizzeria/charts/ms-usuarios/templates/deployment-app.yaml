@@ -29,8 +29,8 @@ spec:
             - name: MICROSERVICIO
               value: "ms-usuarios"
             - name: DATABASE_URL
-              # 👇 CAMBIO AQUÍ: Ponemos el nombre fijo del servicio de postgres
-              value: "postgresql://admin:admin@tito-ms-usuarios-postgres:5432/bdusuarios?schema=public"
+              # 👇 AQUÍ ESTÁ LA CORRECCIÓN: Contraseña 'admin_usuarios_pass'
+              value: "postgresql://admin:admin_usuarios_pass@tito-ms-usuarios-postgres:5432/bdusuarios?schema=public"
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
