@@ -30,17 +30,6 @@ spec:
               value: "ms-usuarios"
             - name: DATABASE_URL
               value: "postgresql://admin:$(DATABASE_PASSWORD)@{{ include "ms-usuarios.fullname" . }}-postgres:5432/bdusuarios?schema=public"
-            # --- ESTAS SON LAS QUE ESTABAN MAL PEGADAS ---
-            - name: PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "ms-usuarios.fullname" . }}-config
-                  key: PORT
-            - name: NATS_SERVERS
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "ms-usuarios.fullname" . }}-config
-                  key: NATS_SERVERS
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
@@ -49,6 +38,4 @@ spec:
           envFrom:
             - configMapRef:
                 name: tito-ms-usuarios-config
-          # ✅ AQUÍ NO DEBE HABER NADA DE volumeMounts
-      # ✅ AQUÍ NO DEBE HABER NADA DE volumes
 {{- end }}
