@@ -2,7 +2,7 @@ global:
   # En Kubernetes no usamos localhost, usamos el nombre del servicio de NATS
   natsServers: "nats://infra-nats:4222" 
   jwtSecret: "TuClaveSuperSecreta123"
-env:
+  env:
     REPO_GIT: "https://github.com/rodriguez-22/backend-mc-pnpm.git"
 
 # 1. ACTIVAR NATS (Infraestructura)
