@@ -12,5 +12,5 @@ data:
   MS_USERS_PORT: "3000"
   MS_PRODUCTS_HOST: "tito-ms-products-service"
   MS_PRODUCTS_PORT: "3000"
-  JWT_SECRET: JWT_SECRET
+  
 {{- end }}

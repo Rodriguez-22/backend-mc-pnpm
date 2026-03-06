@@ -34,6 +34,11 @@ spec:
               value: "nats://nats.tito-pizzeria.svc.cluster.local:4222"
             - name: PORT
               value: {{ .Values.app.containerPort | quote }}
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-token-secret
+                  key: JWT_SECRET
           ports:
             - containerPort: {{ .Values.app.containerPort }}
           envFrom:
