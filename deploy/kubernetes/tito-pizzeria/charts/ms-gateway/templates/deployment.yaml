@@ -15,29 +15,18 @@ spec:
         app: tito-ms-gateway
     spec:
       containers:
-        # 👇 AQUÍ: Cambiamos el include por el nombre estático
         - name: tito-ms-gateway
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          # 👇 Eliminamos la carga individual de ConfigMap porque envFrom ya lo hace
           env:
-            - name: PORT
-              valueFrom:
-                configMapKeyRef:
-                  # 👇 AQUÍ: Cambiamos el include
-                  name: tito-ms-gateway-config
-                  key: PORT
-            - name: NATS_SERVERS
-              valueFrom:
-                configMapKeyRef:
-                  # 👇 AQUÍ: Cambiamos el include
-                  name: tito-ms-gateway-config
-                  key: NATS_SERVERS
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: jwt-token-secret
                   key: JWT_SECRET
           ports:
-            - containerPort: {{ .Values.app.containerPort }}
+            - containerPort: {{ .Values.service.port }}
+          # 👇 Esto inyecta TODAS las variables de tu configmap de un solo golpe
           envFrom:
             - configMapRef:
                 name: tito-ms-gateway-config
