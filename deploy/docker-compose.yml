@@ -52,6 +52,7 @@ services:
       - ./data/auth:/var/lib/postgresql/data
 
   # Base de datos para Products
+  # Prueba para que funcione el jeninsfile
   db-products:
     image: postgres:15
     container_name: postgres-products
