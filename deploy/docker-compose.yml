@@ -23,6 +23,7 @@ services:
       timeout: 5s
       retries: 5
   # Base de datos para Users
+  # Cada servicio tiene su propia base de datos para mantener la separación de datos y facilitar la gestión.
   db-users:
     image: postgres:15
     container_name: postgres-users
